@@ -52,11 +52,11 @@ public class AuthService{
 //        LOGGER.info(String.valueOf(userInfo.getProfile_nickname()));
 //        LOGGER.info(String.valueOf(userInfo.getProfile_image()));
 
-        LOGGER.info(String.valueOf(userInfo.getKakao_account().getEmail()));
-        LOGGER.info(String.valueOf(userInfo.getKakao_account().getProfile().getProfileImageUrl()));
-        LOGGER.info(String.valueOf(userInfo.getKakao_account().getProfile().getNickname()));
+//        LOGGER.info(String.valueOf(userInfo.getKakao_account().getEmail()));
+//        LOGGER.info(String.valueOf(userInfo.getKakao_account().getProfile().getProfileImageUrl()));
+//        LOGGER.info(String.valueOf(userInfo.getKakao_account().getProfile().getNickname()));
 
-        Optional<User> userData = userRepository.findByUAndUsernumber(String.valueOf(userInfo.getId()));
+        Optional<User> userData = userRepository.findByUsernumber(String.valueOf(userInfo.getId()));
 
         if(userData.isEmpty()){
             user = User.builder()
@@ -70,7 +70,7 @@ public class AuthService{
             userRepository.save(user);
         }
 
-        Optional<User> userLoginData = userRepository.findByUAndUsernumber(String.valueOf(userInfo.getId()));
+        Optional<User> userLoginData = userRepository.findByUsernumber(String.valueOf(userInfo.getId()));
 
 
         String refreshToken = "Bearer " +jwtTokenProvider.createRereshToken();
