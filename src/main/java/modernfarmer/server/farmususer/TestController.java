@@ -1,4 +1,4 @@
-package com.example.farmususer;
+package modernfarmer.server.farmususer;
 
 
 import org.springframework.web.bind.annotation.GetMapping;
