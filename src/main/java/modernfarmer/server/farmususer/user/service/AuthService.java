@@ -73,7 +73,7 @@ public class AuthService{
         Optional<User> userLoginData = userRepository.findByUsernumber(String.valueOf(userInfo.getId()));
 
 
-        String refreshToken = "Bearer " +jwtTokenProvider.createRereshToken();
+        String refreshToken = "Bearer " +jwtTokenProvider.createRereshToken(userLoginData.get().getId());
 
         TokenResponseDto tokenResponseDto = TokenResponseDto.builder()
                 .message("OK")
@@ -84,8 +84,10 @@ public class AuthService{
                 .refreshToken(refreshToken)
                 .build();
 
-        redisTemplate.opsForHash().put(jwtTokenProvider.createRereshToken(),"userId", String.valueOf(userLoginData.get().getId()));
-        redisTemplate.opsForHash().put(jwtTokenProvider.createRereshToken(),"role", String.valueOf(userLoginData.get().getRole()));
+//        redisTemplate.opsForHash().put(jwtTokenProvider.createRereshToken(),"userId", String.valueOf(userLoginData.get().getId()));
+//        redisTemplate.opsForHash().put(jwtTokenProvider.createRereshToken(),"role", String.valueOf(userLoginData.get().getRole()));
+
+        redisTemplate.opsForValue().set(String.valueOf(userLoginData.get().getId()),refreshToken);
 
 
         return tokenResponseDto;

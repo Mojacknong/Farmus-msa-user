@@ -55,7 +55,8 @@ public class JwtTokenProvider {
         return token;
     }
 
-    public String createRereshToken() {            // 토큰 생성
+    public String createRereshToken(Long userId) {            // 토큰 생성
+        Claims claims = Jwts.claims().setSubject(String.valueOf(userId));
 
         Date now = new Date();
         String token = Jwts.builder()
