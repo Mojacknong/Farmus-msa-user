@@ -35,7 +35,17 @@ public class AuthController {
         return reissueTokenResponseDto;
     }
 
+    @PostMapping(value = "/google-login")
+    public TokenResponseDto googleLogin(HttpServletRequest request)  {
 
+        String accessToken = jwtTokenProvider.resolveToken(request);
+
+        TokenResponseDto tokenResponseDto = authService.googleLogin(accessToken);
+
+        LOGGER.info("구글 로그인 완료");
+
+        return tokenResponseDto;
+    }
 
 
 
