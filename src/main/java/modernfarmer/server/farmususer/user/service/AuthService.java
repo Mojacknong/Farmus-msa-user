@@ -1,6 +1,7 @@
 package modernfarmer.server.farmususer.user.service;
 
 import lombok.extern.slf4j.Slf4j;
+import modernfarmer.server.farmususer.user.dto.response.GoogleUserResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.KakaoUserResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
@@ -39,13 +40,62 @@ public class AuthService{
         this.redisTemplate = redisTemplate;
     }
 
+    public TokenResponseDto googleLogin(String accessToken) {
 
+        User user;
+
+        Mono<GoogleUserResponseDto> userInfoMono = getUserGoogleInfo(accessToken);
+        GoogleUserResponseDto userInfo = userInfoMono.block();
+
+//        LOGGER.info(String.valueOf(userInfo.getAccount_email()));
+//        LOGGER.info(String.valueOf(userInfo.getProfile_nickname()));
+//        LOGGER.info(String.valueOf(userInfo.getProfile_image()));
+
+//        LOGGER.info(String.valueOf(userInfo.getKakao_account().getEmail()));
+//        LOGGER.info(String.valueOf(userInfo.getKakao_account().getProfile().getProfileImageUrl()));
+//        LOGGER.info(String.valueOf(userInfo.getKakao_account().getProfile().getNickname()));
+
+        Optional<User> userData = userRepository.findByUsernumber(String.valueOf(userInfo.getId()));
+
+        if(userData.isEmpty()){
+            user = User.builder()
+                    .usernumber(String.valueOf(userInfo.getId()))
+                    .role("USER")
+//                    .email(userInfo.getKakao_account().getEmail())
+//                    .nickname(userInfo.getKakao_account().getProfile().getNickname())
+//                    .userProfile(userInfo.getKakao_account().getProfile().getProfileImageUrl())
+                    .build();
+
+            userRepository.save(user);
+        }
+
+        Optional<User> userLoginData = userRepository.findByUsernumber(String.valueOf(userInfo.getId()));
+
+
+        String refreshToken = "Bearer " +jwtTokenProvider.createRereshToken(userLoginData.get().getId());
+
+        TokenResponseDto tokenResponseDto = TokenResponseDto.builder()
+                .message("OK")
+                .code(200)
+                .accessToken("Bearer " +jwtTokenProvider.createAccessToken(
+                        userLoginData.get().getId(),
+                        String.valueOf(userLoginData.get().getRole())))
+                .refreshToken(refreshToken)
+                .build();
+
+//        redisTemplate.opsForHash().put(jwtTokenProvider.createRereshToken(),"userId", String.valueOf(userLoginData.get().getId()));
+//        redisTemplate.opsForHash().put(jwtTokenProvider.createRereshToken(),"role", String.valueOf(userLoginData.get().getRole()));
+
+        redisTemplate.opsForValue().set(String.valueOf(userLoginData.get().getId()),refreshToken);
+
+
+        return tokenResponseDto;
+    }
 
     public TokenResponseDto kakaoLogin(String accessToken) {
 
         User user;
-
-        Mono<KakaoUserResponseDto> userInfoMono = getUserInfo(accessToken);
+        Mono<KakaoUserResponseDto> userInfoMono = getUserKakaoInfo(accessToken);
         KakaoUserResponseDto userInfo = userInfoMono.block();
 
 //        LOGGER.info(String.valueOf(userInfo.getAccount_email()));
@@ -157,12 +207,21 @@ public class AuthService{
 
 
 
-    public Mono<KakaoUserResponseDto> getUserInfo(String accessToken) {
+    public Mono<KakaoUserResponseDto> getUserKakaoInfo(String accessToken) {
         return webClient
                 .get()
                 .uri("https://kapi.kakao.com/v2/user/me") // 카카오 사용자 정보 엔드포인트
                 .headers(headers -> headers.setBearerAuth(accessToken))
                 .retrieve()
                 .bodyToMono(KakaoUserResponseDto.class);
+    }
+
+    public Mono<GoogleUserResponseDto> getUserGoogleInfo(String accessToken) {
+        return webClient
+                .get()
+                .uri("https://www.googleapis.com/oauth2/v2/userinfo") // 카카오 사용자 정보 엔드포인트
+                .headers(headers -> headers.setBearerAuth(accessToken))
+                .retrieve()
+                .bodyToMono(GoogleUserResponseDto.class);
     }
 }

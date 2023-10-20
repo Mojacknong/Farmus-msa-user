@@ -39,7 +39,6 @@ public class AuthController {
     @DeleteMapping("/logout")
     public ResponseDto logout(HttpServletRequest request)  {
 
-
         String userId = jwtTokenProvider.getUserId(request);
 
         ResponseDto logoutResponseDto = authService.logout(Long.valueOf(userId));
@@ -63,7 +62,17 @@ public class AuthController {
     }
 
 
+    @PostMapping(value = "/google-login")
+    public TokenResponseDto googleLogin(HttpServletRequest request)  {
 
+        String accessToken = jwtTokenProvider.resolveToken(request);
+
+        TokenResponseDto tokenResponseDto = authService.googleLogin(accessToken);
+
+        LOGGER.info("구글 로그인 완료");
+
+        return tokenResponseDto;
+    }
 
 
 
