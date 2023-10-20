@@ -1,5 +1,6 @@
 package modernfarmer.server.farmususer.user.controller;
 
+import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
 import modernfarmer.server.farmususer.user.service.AuthService;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
@@ -34,6 +35,33 @@ public class AuthController {
 
         return reissueTokenResponseDto;
     }
+
+    @DeleteMapping("/logout")
+    public ResponseDto logout(HttpServletRequest request)  {
+
+
+        String userId = jwtTokenProvider.getUserId(request);
+
+        ResponseDto logoutResponseDto = authService.logout(Long.valueOf(userId));
+
+        LOGGER.info("로그아웃 완료");
+
+        return logoutResponseDto;
+    }
+
+    @GetMapping(value = "/reissue-token")
+    public TokenResponseDto reissueToken(HttpServletRequest request)  {
+
+        String userId = jwtTokenProvider.getUserId(request);
+        String refreshToken = jwtTokenProvider.resolveToken(request);
+
+        TokenResponseDto reissueTokenResponseDto = authService.reissueToken(refreshToken, Long.valueOf(userId));
+
+        LOGGER.info("토큰 재발급 완료");
+
+        return reissueTokenResponseDto;
+    }
+
 
 
 
