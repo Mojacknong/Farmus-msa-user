@@ -82,6 +82,24 @@ public class JwtTokenProvider {
         }
     }
 
+    public String getUserRole(HttpServletRequest request) {
+        LOGGER.info("[resolveToken] HTTP 헤더에서 Token 값 추출");
+
+        String tokenRole = request.getHeader("role");
+
+        return tokenRole;
+
+    }
+
+    public String getUserId(HttpServletRequest request) {
+        LOGGER.info("[resolveToken] HTTP 헤더에서 Token 값 추출");
+
+        String tokenUser = request.getHeader("user");
+
+        return tokenUser;
+
+    }
+
 
 
     public boolean validateRefreshToken(String token) {                         // 토큰 유효성 확인
