@@ -169,7 +169,7 @@ public class AuthService{
             return reissueTokenResponse;
         }
 
-        String redisRefreshToken = redisTemplate.opsForValue().get(userId);
+        String redisRefreshToken = redisTemplate.opsForValue().get(userId.toString());
 
         if(redisRefreshToken.equals(refreshToken)){
 
@@ -179,7 +179,7 @@ public class AuthService{
                     .builder()
                     .code(200)
                     .message("OK")
-                    .accessToken(jwtTokenProvider.createAccessToken(Long.valueOf(userId),userRole))
+                    .accessToken(jwtTokenProvider.createAccessToken(userId,userRole))
                     .refreshToken(refreshToken)
                     .build();
 
