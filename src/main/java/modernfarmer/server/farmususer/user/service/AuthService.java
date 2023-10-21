@@ -95,8 +95,6 @@ public class AuthService{
     public TokenResponseDto kakaoLogin(String accessToken) {
 
         User user;
-
-
         Mono<KakaoUserResponseDto> userInfoMono = getUserKakaoInfo(accessToken);
         KakaoUserResponseDto userInfo = userInfoMono.block();
 
@@ -202,7 +200,6 @@ public class AuthService{
     public void deleteValueByKey(String key) {
         redisTemplate.delete(key);
     }
-
 
 
 
