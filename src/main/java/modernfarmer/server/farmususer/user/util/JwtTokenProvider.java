@@ -55,11 +55,12 @@ public class JwtTokenProvider {
         return token;
     }
 
-    public String createRereshToken(Long userId) {            // 토큰 생성
+    public String createRefreshToken(Long userId) {            // 토큰 생성
         Claims claims = Jwts.claims().setSubject(String.valueOf(userId));
 
         Date now = new Date();
         String token = Jwts.builder()
+                .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + refreshTokenTime))
                 .signWith(SignatureAlgorithm.HS256, secretKey) // 암호화 알고리즘, secret 값 세팅
