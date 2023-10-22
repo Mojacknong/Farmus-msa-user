@@ -171,13 +171,13 @@ public class AuthService{
 
         if(redisRefreshToken.equals(refreshToken)){
 
-            String userRole = String.valueOf(userRepository.findUserRole(userId));
+            String userRole = userRepository.findUserRole(userId);
 
             reissueTokenResponse= TokenResponseDto
                     .builder()
                     .code(200)
                     .message("OK")
-                    .accessToken(jwtTokenProvider.createAccessToken(userId,userRole))
+                    .accessToken(jwtTokenProvider.createAccessToken(userId, userRole))
                     .refreshToken(refreshToken)
                     .build();
 
