@@ -72,12 +72,12 @@ public class AuthService{
         Optional<User> userLoginData = userRepository.findByUsernumber(String.valueOf(userInfo.getId()));
 
 
-        String refreshToken = "Bearer " +jwtTokenProvider.createRereshToken(userLoginData.get().getId());
+        String refreshToken = jwtTokenProvider.createRefreshToken(userLoginData.get().getId());
 
         TokenResponseDto tokenResponseDto = TokenResponseDto.builder()
                 .message("OK")
                 .code(200)
-                .accessToken("Bearer " +jwtTokenProvider.createAccessToken(
+                .accessToken(jwtTokenProvider.createAccessToken(
                         userLoginData.get().getId(),
                         String.valueOf(userLoginData.get().getRole())))
                 .refreshToken(refreshToken)
@@ -123,12 +123,12 @@ public class AuthService{
         Optional<User> userLoginData = userRepository.findByUsernumber(String.valueOf(userInfo.getId()));
 
 
-        String refreshToken = "Bearer " +jwtTokenProvider.createRereshToken(userLoginData.get().getId());
+        String refreshToken = jwtTokenProvider.createRefreshToken(userLoginData.get().getId());
 
         TokenResponseDto tokenResponseDto = TokenResponseDto.builder()
                 .message("OK")
                 .code(200)
-                .accessToken("Bearer " +jwtTokenProvider.createAccessToken(
+                .accessToken(jwtTokenProvider.createAccessToken(
                         userLoginData.get().getId(),
                         String.valueOf(userLoginData.get().getRole())))
                 .refreshToken(refreshToken)
@@ -167,17 +167,17 @@ public class AuthService{
             return reissueTokenResponse;
         }
 
-        String redisRefreshToken = redisTemplate.opsForValue().get(userId);
+        String redisRefreshToken = redisTemplate.opsForValue().get(userId.toString());
 
         if(redisRefreshToken.equals(refreshToken)){
 
-            String userRole = String.valueOf(userRepository.findUserRole(userId));
+            String userRole = userRepository.findUserRole(userId);
 
             reissueTokenResponse= TokenResponseDto
                     .builder()
                     .code(200)
                     .message("OK")
-                    .accessToken(jwtTokenProvider.createAccessToken(Long.valueOf(userId),userRole))
+                    .accessToken(jwtTokenProvider.createAccessToken(userId, userRole))
                     .refreshToken(refreshToken)
                     .build();
 
