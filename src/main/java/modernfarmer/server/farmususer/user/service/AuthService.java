@@ -72,12 +72,12 @@ public class AuthService{
         Optional<User> userLoginData = userRepository.findByUsernumber(String.valueOf(userInfo.getId()));
 
 
-        String refreshToken = "Bearer " +jwtTokenProvider.createRefreshToken(userLoginData.get().getId());
+        String refreshToken = jwtTokenProvider.createRefreshToken(userLoginData.get().getId());
 
         TokenResponseDto tokenResponseDto = TokenResponseDto.builder()
                 .message("OK")
                 .code(200)
-                .accessToken("Bearer " +jwtTokenProvider.createAccessToken(
+                .accessToken(jwtTokenProvider.createAccessToken(
                         userLoginData.get().getId(),
                         String.valueOf(userLoginData.get().getRole())))
                 .refreshToken(refreshToken)
@@ -128,7 +128,7 @@ public class AuthService{
         TokenResponseDto tokenResponseDto = TokenResponseDto.builder()
                 .message("OK")
                 .code(200)
-                .accessToken("Bearer " +jwtTokenProvider.createAccessToken(
+                .accessToken(jwtTokenProvider.createAccessToken(
                         userLoginData.get().getId(),
                         String.valueOf(userLoginData.get().getRole())))
                 .refreshToken(refreshToken)
