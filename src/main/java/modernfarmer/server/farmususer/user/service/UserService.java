@@ -1,6 +1,5 @@
 package modernfarmer.server.farmususer.user.service;
 
-import modernfarmer.server.farmususer.global.exception.unauthorized.TokenExpiredException;
 import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
 import modernfarmer.server.farmususer.user.repository.UserRepository;
@@ -42,19 +41,6 @@ public class UserService {
 
     public TokenResponseDto reissueToken(String refreshToken, Long userId) {
         TokenResponseDto reissueTokenResponse;
-
-        if(!jwtTokenProvider.validateRefreshToken(refreshToken)){
-
-//            reissueTokenResponse = TokenResponseDto.builder()
-//                    .code(417)
-//                    .message("재로그인하시오")
-//                    .build();
-
-
-            new TokenExpiredException();
-
-          //  return reissueTokenResponse;
-        }
 
         String redisRefreshToken = redisTemplate.opsForValue().get(userId.toString());
 

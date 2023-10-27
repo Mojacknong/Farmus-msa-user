@@ -1,16 +1,12 @@
 package modernfarmer.server.farmususer.user.service;
 
 import lombok.extern.slf4j.Slf4j;
-import modernfarmer.server.farmususer.global.exception.unauthorized.TokenExpiredException;
 import modernfarmer.server.farmususer.user.dto.response.GoogleUserResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.KakaoUserResponseDto;
-import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
 import modernfarmer.server.farmususer.user.entity.User;
 import modernfarmer.server.farmususer.user.repository.UserRepository;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
