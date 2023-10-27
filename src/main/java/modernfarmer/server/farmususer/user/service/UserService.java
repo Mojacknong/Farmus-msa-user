@@ -46,7 +46,7 @@ public class UserService {
 
         String redisRefreshToken = redisTemplate.opsForValue().get(userId.toString());
 
-        if(Objects.requireNonNull(redisRefreshToken).equals(refreshToken) && !redisRefreshToken.isEmpty()){
+        if(!redisRefreshToken.isEmpty() && redisRefreshToken.equals(refreshToken)){
 
             String userRole = userRepository.findUserRole(userId);
 
