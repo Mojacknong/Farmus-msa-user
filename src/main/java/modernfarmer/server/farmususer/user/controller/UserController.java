@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
+
 import modernfarmer.server.farmususer.user.service.AuthService;
+import modernfarmer.server.farmususer.user.service.UserService;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final AuthService authService;
+    private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
 
 
@@ -29,7 +31,7 @@ public class UserController {
 
         String userId = jwtTokenProvider.getUserId(request);
 
-        ResponseDto logoutResponseDto = authService.logout(Long.valueOf(userId));
+        ResponseDto logoutResponseDto = userService.logout(Long.valueOf(userId));
 
         log.info("로그아웃 완료");
 
@@ -42,7 +44,7 @@ public class UserController {
         String userId = jwtTokenProvider.getUserId(request);
         String refreshToken = jwtTokenProvider.resolveToken(request);
 
-        TokenResponseDto reissueTokenResponseDto = authService.reissueToken(refreshToken, Long.valueOf(userId));
+        TokenResponseDto reissueTokenResponseDto = userService.reissueToken(refreshToken, Long.valueOf(userId));
 
         log.info("토큰 재발급 완료");
 

@@ -2,7 +2,7 @@ name: ModernFarmer CI/CD
 
 on:
   push:
-    branches: ["dev"]
+    branches: ["feature_11/에러처리-추가"]
 
   pull_request:
     branches: ["dev"]
