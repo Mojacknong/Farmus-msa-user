@@ -1,6 +1,7 @@
 package modernfarmer.server.farmususer.user.service;
 
 import lombok.extern.slf4j.Slf4j;
+import modernfarmer.server.farmususer.global.exception.unauthorized.TokenExpiredException;
 import modernfarmer.server.farmususer.user.dto.response.GoogleUserResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.KakaoUserResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
@@ -163,6 +164,9 @@ public class AuthService{
                     .code(417)
                     .message("재로그인하시오")
                     .build();
+            
+
+            new TokenExpiredException();
 
             return reissueTokenResponse;
         }
