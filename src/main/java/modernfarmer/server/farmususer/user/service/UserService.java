@@ -9,6 +9,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Objects;
+
 
 @Service
 public class UserService {
@@ -44,7 +46,7 @@ public class UserService {
 
         String redisRefreshToken = redisTemplate.opsForValue().get(userId.toString());
 
-        if(redisRefreshToken.equals(refreshToken)){
+        if(Objects.requireNonNull(redisRefreshToken).equals(refreshToken)){
 
             String userRole = userRepository.findUserRole(userId);
 
