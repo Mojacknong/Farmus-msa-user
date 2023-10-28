@@ -1,5 +1,6 @@
 package modernfarmer.server.farmususer.user.service;
 
+import modernfarmer.server.farmususer.global.exception.notfound.NotFoundRefreshTokenException;
 import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
 import modernfarmer.server.farmususer.user.repository.UserRepository;
@@ -60,14 +61,9 @@ public class UserService {
 
             return reissueTokenResponse;
 
+
         }
-
-        reissueTokenResponse = TokenResponseDto.builder()
-                .code(403)
-                .message("접근이 올바르지 않습니다.")
-                .build();
-
-        return reissueTokenResponse;
+        throw new NotFoundRefreshTokenException();
 
     }
 

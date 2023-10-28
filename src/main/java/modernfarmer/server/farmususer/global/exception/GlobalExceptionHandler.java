@@ -38,6 +38,6 @@ public class GlobalExceptionHandler {
                 e.getMessage()
         );
         return ResponseEntity.internalServerError()
-                .body(new ErrorResponse(7777, "서버와의 접속이 원활하지 않습니다."));
+                .body(new ErrorResponse(500, "서버와의 접속이 원활하지 않습니다."));
     }
 }
