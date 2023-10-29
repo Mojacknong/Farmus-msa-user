@@ -35,6 +35,7 @@ public class UserService {
         this.amazonS3ResourceStorage = amazonS3ResourceStoraget;
     }
 
+
     public ResponseDto produceProfileImage(Long userId, MultipartFile multipartFile){
 
 
