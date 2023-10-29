@@ -35,6 +35,16 @@ public class UserController {
         return responseDto;
     }
 
+    @PutMapping(value = "/nickname")
+    public ResponseDto updateNickname(HttpServletRequest request, ProduceNicknameRequest produceNicknameRequest){
+
+        String userId = jwtTokenProvider.getUserId(request);
+
+        ResponseDto responseDto = userService.produceNickname(Long.valueOf(userId), produceNicknameRequest.getNickName());
+
+        return responseDto;
+    }
+
 
     @DeleteMapping("/logout")
     public ResponseDto logout(HttpServletRequest request)  {
