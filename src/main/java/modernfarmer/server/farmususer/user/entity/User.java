@@ -35,4 +35,12 @@ public class User {
     private String role;
 
 
+    @Size(max = 45)
+    @Column(name = "nickname", length = 45)
+    private String nickname;
+
+    @Size(max = 255)
+    @Column(name = "profile_image")
+    private String profileImage;
+
 }

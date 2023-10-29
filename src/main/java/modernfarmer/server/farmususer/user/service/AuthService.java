@@ -1,5 +1,6 @@
 package modernfarmer.server.farmususer.user.service;
 
+
 import lombok.extern.slf4j.Slf4j;
 import modernfarmer.server.farmususer.user.dto.response.GoogleUserResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.KakaoUserResponseDto;
@@ -9,7 +10,6 @@ import modernfarmer.server.farmususer.user.repository.UserRepository;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -28,6 +28,7 @@ public class AuthService{
     public UserRepository userRepository;
 
     private final WebClient webClient;
+    private boolean early = false;
 
     @Autowired
     public AuthService(WebClient webClient, UserRepository userRepository, JwtTokenProvider jwtTokenProvider, RedisTemplate<String, String> redisTemplate) {
@@ -44,24 +45,20 @@ public class AuthService{
         Mono<GoogleUserResponseDto> userInfoMono = getUserGoogleInfo(accessToken);
         GoogleUserResponseDto userInfo = userInfoMono.block();
 
-//        LOGGER.info(String.valueOf(userInfo.getAccount_email()));
-//        LOGGER.info(String.valueOf(userInfo.getProfile_nickname()));
-//        LOGGER.info(String.valueOf(userInfo.getProfile_image()));
-
-//        LOGGER.info(String.valueOf(userInfo.getKakao_account().getEmail()));
-//        LOGGER.info(String.valueOf(userInfo.getKakao_account().getProfile().getProfileImageUrl()));
-//        LOGGER.info(String.valueOf(userInfo.getKakao_account().getProfile().getNickname()));
 
         Optional<User> userData = userRepository.findByUsernumber(String.valueOf(userInfo.getId()));
+
+        log.info(String.valueOf(userInfo.getEmail()));
+        log.info(String.valueOf(userInfo.getPicture()));
+        log.info(String.valueOf(userInfo.getId()));
 
         if(userData.isEmpty()){
             user = User.builder()
                     .usernumber(String.valueOf(userInfo.getId()))
                     .role("USER")
-//                    .email(userInfo.getKakao_account().getEmail())
-//                    .nickname(userInfo.getKakao_account().getProfile().getNickname())
-//                    .userProfile(userInfo.getKakao_account().getProfile().getProfileImageUrl())
+                    .profileImage(userInfo.getPicture())
                     .build();
+            early = true;
 
             userRepository.save(user);
         }
@@ -74,14 +71,13 @@ public class AuthService{
         TokenResponseDto tokenResponseDto = TokenResponseDto.builder()
                 .message("OK")
                 .code(200)
+                .early(early)
                 .accessToken(jwtTokenProvider.createAccessToken(
                         userLoginData.get().getId(),
                         String.valueOf(userLoginData.get().getRole())))
                 .refreshToken(refreshToken)
                 .build();
 
-//        redisTemplate.opsForHash().put(jwtTokenProvider.createRereshToken(),"userId", String.valueOf(userLoginData.get().getId()));
-//        redisTemplate.opsForHash().put(jwtTokenProvider.createRereshToken(),"role", String.valueOf(userLoginData.get().getRole()));
 
         redisTemplate.opsForValue().set(String.valueOf(userLoginData.get().getId()),refreshToken);
 
@@ -95,13 +91,11 @@ public class AuthService{
         Mono<KakaoUserResponseDto> userInfoMono = getUserKakaoInfo(accessToken);
         KakaoUserResponseDto userInfo = userInfoMono.block();
 
-//        LOGGER.info(String.valueOf(userInfo.getAccount_email()));
-//        LOGGER.info(String.valueOf(userInfo.getProfile_nickname()));
-//        LOGGER.info(String.valueOf(userInfo.getProfile_image()));
 
-//        LOGGER.info(String.valueOf(userInfo.getKakao_account().getEmail()));
-//        LOGGER.info(String.valueOf(userInfo.getKakao_account().getProfile().getProfileImageUrl()));
-//        LOGGER.info(String.valueOf(userInfo.getKakao_account().getProfile().getNickname()));
+        log.info(String.valueOf(userInfo.getKakao_account().getEmail()));
+        log.info(String.valueOf(userInfo.getKakao_account().getProfile().getProfile_image_url()));
+        log.info(String.valueOf(userInfo.getKakao_account().getProfile().getNickname()));
+
 
         Optional<User> userData = userRepository.findByUsernumber(String.valueOf(userInfo.getId()));
 
@@ -109,10 +103,10 @@ public class AuthService{
             user = User.builder()
                     .usernumber(String.valueOf(userInfo.getId()))
                     .role("USER")
-//                    .email(userInfo.getKakao_account().getEmail())
-//                    .nickname(userInfo.getKakao_account().getProfile().getNickname())
-//                    .userProfile(userInfo.getKakao_account().getProfile().getProfileImageUrl())
+                    .profileImage(userInfo.getKakao_account().getProfile().getProfile_image_url())
                     .build();
+
+            early = true;
 
             userRepository.save(user);
         }
@@ -125,21 +119,19 @@ public class AuthService{
         TokenResponseDto tokenResponseDto = TokenResponseDto.builder()
                 .message("OK")
                 .code(200)
+                .early(early)
                 .accessToken(jwtTokenProvider.createAccessToken(
                         userLoginData.get().getId(),
                         String.valueOf(userLoginData.get().getRole())))
                 .refreshToken(refreshToken)
                 .build();
 
-//        redisTemplate.opsForHash().put(jwtTokenProvider.createRereshToken(),"userId", String.valueOf(userLoginData.get().getId()));
-//        redisTemplate.opsForHash().put(jwtTokenProvider.createRereshToken(),"role", String.valueOf(userLoginData.get().getRole()));
 
         redisTemplate.opsForValue().set(String.valueOf(userLoginData.get().getId()),refreshToken);
 
 
         return tokenResponseDto;
     }
-
 
     public Mono<KakaoUserResponseDto> getUserKakaoInfo(String accessToken) {
         return webClient
