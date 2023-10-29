@@ -32,6 +32,19 @@ public class UserService {
         this.redisTemplate = redisTemplate;
     }
 
+    public ResponseDto deleteUser(Long userId){
+
+        userRepository.deleteUser(userId);
+
+        ResponseDto responseDto = ResponseDto
+                .builder()
+                .code(200)
+                .message("OK")
+                .build();
+
+        return responseDto;
+    }
+
 
     public ResponseDto produceNickname(Long userId, String nickName){
 

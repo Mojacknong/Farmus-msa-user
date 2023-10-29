@@ -24,6 +24,17 @@ public class UserController {
     private final JwtTokenProvider jwtTokenProvider;
 
 
+    @DeleteMapping(value = "/delete")
+    public ResponseDto deleteUser(HttpServletRequest request){
+
+        String userId = jwtTokenProvider.getUserId(request);
+
+        ResponseDto responseDto = userService.deleteUser(Long.valueOf(userId));
+
+        return responseDto;
+    }
+
+
 
     @PostMapping(value = "/nickname")
     public ResponseDto produceNickname(HttpServletRequest request, ProduceNicknameRequest produceNicknameRequest){
@@ -35,7 +46,7 @@ public class UserController {
         return responseDto;
     }
 
-    @PutMapping(value = "/nickname")
+    @PatchMapping(value = "/nickname")
     public ResponseDto updateNickname(HttpServletRequest request, ProduceNicknameRequest produceNicknameRequest){
 
         String userId = jwtTokenProvider.getUserId(request);
