@@ -1,36 +1,57 @@
 package modernfarmer.server.farmususer.user.service;
 
+import lombok.extern.slf4j.Slf4j;
+import modernfarmer.server.farmususer.global.config.s3.AmazonS3ResourceStorage;
+import modernfarmer.server.farmususer.global.config.s3.FileDetail;
 import modernfarmer.server.farmususer.global.exception.notfound.NotFoundRefreshTokenException;
 import modernfarmer.server.farmususer.user.dto.response.ProfileImageResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
-import modernfarmer.server.farmususer.user.entity.User;
 import modernfarmer.server.farmususer.user.repository.UserRepository;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.Objects;
 
-
+@Slf4j
 @Service
 public class UserService {
 
     public JwtTokenProvider jwtTokenProvider;
     public RedisTemplate<String, String> redisTemplate;
-
     public UserRepository userRepository;
+    private final AmazonS3ResourceStorage amazonS3ResourceStorage;
 
-    private final WebClient webClient;
 
     @Autowired
-    public UserService(WebClient webClient, UserRepository userRepository, JwtTokenProvider jwtTokenProvider, RedisTemplate<String, String> redisTemplate) {
-        this.webClient = webClient;
+    public UserService(WebClient webClient, UserRepository userRepository, JwtTokenProvider jwtTokenProvider, RedisTemplate<String, String> redisTemplate, AmazonS3ResourceStorage amazonS3ResourceStoraget) {
+
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.redisTemplate = redisTemplate;
+        this.amazonS3ResourceStorage = amazonS3ResourceStoraget;
+    }
+
+    public ResponseDto produceProfileImage(Long userId, MultipartFile multipartFile){
+
+
+        FileDetail fileDetail = FileDetail.multipartOf(multipartFile);
+        amazonS3ResourceStorage.store(fileDetail.getPath(), multipartFile);
+
+        log.info(String.valueOf(fileDetail));
+
+
+        ResponseDto responseDto = ResponseDto
+                .builder()
+                .code(200)
+                .message("OK")
+                .build();
+
+        return responseDto;
     }
 
     public ProfileImageResponseDto selectProfileImage(Long userId){

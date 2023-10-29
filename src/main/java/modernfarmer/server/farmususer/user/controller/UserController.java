@@ -1,17 +1,16 @@
 package modernfarmer.server.farmususer.user.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import modernfarmer.server.farmususer.user.dto.request.ProduceNicknameRequest;
 import modernfarmer.server.farmususer.user.dto.response.ProfileImageResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
 
-import modernfarmer.server.farmususer.user.service.AuthService;
 import modernfarmer.server.farmususer.user.service.UserService;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,7 +23,16 @@ public class UserController {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
 
+    @PostMapping(value = "/profileImage")
+    public ResponseDto produceProfileImage(HttpServletRequest request, @RequestPart("file") MultipartFile multipartFile){
 
+        String userId = jwtTokenProvider.getUserId(request);
+
+        ResponseDto responseDto = userService.produceProfileImage(Long.valueOf(userId), multipartFile);
+
+        return responseDto;
+
+    }
 
     @GetMapping(value = "/profileImage")
     public ProfileImageResponseDto selectProfileImage(HttpServletRequest request){
@@ -50,7 +58,7 @@ public class UserController {
 
 
     @PostMapping(value = "/nickname")
-    public ResponseDto produceNickname(HttpServletRequest request, ProduceNicknameRequest produceNicknameRequest){
+    public ResponseDto produceNickname(HttpServletRequest request, @RequestBody ProduceNicknameRequest produceNicknameRequest){
 
         String userId = jwtTokenProvider.getUserId(request);
 
@@ -60,7 +68,7 @@ public class UserController {
     }
 
     @PatchMapping(value = "/nickname")
-    public ResponseDto updateNickname(HttpServletRequest request, ProduceNicknameRequest produceNicknameRequest){
+    public ResponseDto updateNickname(HttpServletRequest request, @RequestBody ProduceNicknameRequest produceNicknameRequest){
 
         String userId = jwtTokenProvider.getUserId(request);
 
