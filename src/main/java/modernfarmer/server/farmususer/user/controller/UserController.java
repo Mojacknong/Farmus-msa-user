@@ -1,17 +1,16 @@
 package modernfarmer.server.farmususer.user.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import modernfarmer.server.farmususer.user.dto.request.ProduceNicknameRequest;
 import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
 
 import modernfarmer.server.farmususer.user.service.AuthService;
 import modernfarmer.server.farmususer.user.service.UserService;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,6 +22,18 @@ public class UserController {
 
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
+
+
+
+    @PostMapping(value = "/nickname")
+    public ResponseDto produceNickname(HttpServletRequest request, ProduceNicknameRequest produceNicknameRequest){
+
+        String userId = jwtTokenProvider.getUserId(request);
+
+        ResponseDto responseDto = userService.produceNickname(Long.valueOf(userId), produceNicknameRequest.getNickName());
+
+        return responseDto;
+    }
 
 
     @DeleteMapping("/logout")
@@ -50,4 +61,6 @@ public class UserController {
 
         return reissueTokenResponseDto;
     }
+
+
 }

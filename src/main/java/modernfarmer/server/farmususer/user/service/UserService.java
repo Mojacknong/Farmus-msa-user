@@ -3,6 +3,7 @@ package modernfarmer.server.farmususer.user.service;
 import modernfarmer.server.farmususer.global.exception.notfound.NotFoundRefreshTokenException;
 import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
+import modernfarmer.server.farmususer.user.entity.User;
 import modernfarmer.server.farmususer.user.repository.UserRepository;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,19 @@ public class UserService {
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.redisTemplate = redisTemplate;
+    }
+
+
+    public ResponseDto produceNickname(Long userId, String nickName){
+
+        userRepository.updateUserNickname(nickName, userId);
+
+        ResponseDto responseDto = ResponseDto.builder()
+                .code(200)
+                .message("OK")
+                .build();
+
+        return responseDto;
     }
 
 
