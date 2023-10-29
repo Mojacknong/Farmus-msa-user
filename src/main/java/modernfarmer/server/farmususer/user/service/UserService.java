@@ -26,7 +26,6 @@ public class UserService {
     public UserRepository userRepository;
     private final AmazonS3ResourceStorage amazonS3ResourceStorage;
 
-
     @Autowired
     public UserService(WebClient webClient, UserRepository userRepository, JwtTokenProvider jwtTokenProvider, RedisTemplate<String, String> redisTemplate, AmazonS3ResourceStorage amazonS3ResourceStoraget) {
 
