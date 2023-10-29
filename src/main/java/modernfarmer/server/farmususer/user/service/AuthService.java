@@ -3,13 +3,10 @@ package modernfarmer.server.farmususer.user.service;
 import lombok.extern.slf4j.Slf4j;
 import modernfarmer.server.farmususer.user.dto.response.GoogleUserResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.KakaoUserResponseDto;
-import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
 import modernfarmer.server.farmususer.user.entity.User;
 import modernfarmer.server.farmususer.user.repository.UserRepository;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -142,69 +139,6 @@ public class AuthService{
 
         return tokenResponseDto;
     }
-
-
-    public ResponseDto logout(Long userId) {
-        deleteValueByKey(String.valueOf(userId));
-
-        ResponseDto responseDto = ResponseDto.builder()
-                .message("OK")
-                .code(200)
-                .build();
-        return responseDto;
-    }
-
-    public TokenResponseDto reissueToken(String refreshToken, Long userId) {
-        TokenResponseDto reissueTokenResponse;
-
-        if(!jwtTokenProvider.validateRefreshToken(refreshToken)){
-
-            reissueTokenResponse = TokenResponseDto.builder()
-                    .code(417)
-                    .message("재로그인하시오")
-                    .build();
-
-            return reissueTokenResponse;
-        }
-
-        String redisRefreshToken = redisTemplate.opsForValue().get(userId.toString());
-
-        if(redisRefreshToken.equals(refreshToken)){
-
-            String userRole = userRepository.findUserRole(userId);
-
-            reissueTokenResponse= TokenResponseDto
-                    .builder()
-                    .code(200)
-                    .message("OK")
-                    .accessToken(jwtTokenProvider.createAccessToken(userId, userRole))
-                    .refreshToken(refreshToken)
-                    .build();
-
-            return reissueTokenResponse;
-
-        }
-
-        reissueTokenResponse = TokenResponseDto.builder()
-                .code(403)
-                .message("접근이 올바르지 않습니다.")
-                .build();
-
-        return reissueTokenResponse;
-
-    }
-
-
-
-
-    public void deleteValueByKey(String key) {
-        redisTemplate.delete(key);
-    }
-
-
-
-
-
 
 
     public Mono<KakaoUserResponseDto> getUserKakaoInfo(String accessToken) {
