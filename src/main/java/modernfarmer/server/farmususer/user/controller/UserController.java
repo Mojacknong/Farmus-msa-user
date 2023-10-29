@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import modernfarmer.server.farmususer.user.dto.request.ProduceNicknameRequest;
+import modernfarmer.server.farmususer.user.dto.response.ProfileImageResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
 
@@ -22,6 +23,18 @@ public class UserController {
 
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
+
+
+
+    @GetMapping(value = "/profileImage")
+    public ProfileImageResponseDto selectProfileImage(HttpServletRequest request){
+
+        String userId = jwtTokenProvider.getUserId(request);
+
+        ProfileImageResponseDto profileImageResponseDto = userService.selectProfileImage(Long.valueOf(userId));
+
+        return profileImageResponseDto;
+    }
 
 
     @DeleteMapping(value = "/delete")

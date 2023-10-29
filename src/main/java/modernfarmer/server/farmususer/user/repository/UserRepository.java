@@ -23,6 +23,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("delete from User as u where u.id = : userId")
     void deleteUser(@Param("userId") Long userId);
 
+    @Query("select u.profileImage from User as u where u.id = :userId")
+    String selectUserProfileImage(@Param("userId") Long userId);
+
 
 
 

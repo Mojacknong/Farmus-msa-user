@@ -6,8 +6,9 @@ import lombok.experimental.SuperBuilder;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 @SuperBuilder
-public class ResponseDto {
-    private int code;
-    private String message;
+public class ProfileImageResponseDto extends  ResponseDto{
+
+    private String profileImage;
 }

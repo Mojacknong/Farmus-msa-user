@@ -1,6 +1,7 @@
 package modernfarmer.server.farmususer.user.service;
 
 import modernfarmer.server.farmususer.global.exception.notfound.NotFoundRefreshTokenException;
+import modernfarmer.server.farmususer.user.dto.response.ProfileImageResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
 import modernfarmer.server.farmususer.user.entity.User;
@@ -31,6 +32,28 @@ public class UserService {
         this.jwtTokenProvider = jwtTokenProvider;
         this.redisTemplate = redisTemplate;
     }
+
+    public ProfileImageResponseDto selectProfileImage(Long userId){
+
+        String userProfileImage = userRepository.selectUserProfileImage(userId);
+
+
+        ProfileImageResponseDto profileImageResponseDto = ProfileImageResponseDto
+                .builder()
+                .code(200)
+                .message("OK")
+                .profileImage(userProfileImage)
+                .build();
+
+
+        return profileImageResponseDto;
+    }
+
+
+
+
+
+
 
     public ResponseDto deleteUser(Long userId){
 
