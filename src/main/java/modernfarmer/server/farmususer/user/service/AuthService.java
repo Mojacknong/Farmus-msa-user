@@ -28,6 +28,7 @@ public class AuthService{
     public UserRepository userRepository;
 
     private final WebClient webClient;
+    private boolean early = false;
 
     @Autowired
     public AuthService(WebClient webClient, UserRepository userRepository, JwtTokenProvider jwtTokenProvider, RedisTemplate<String, String> redisTemplate) {
@@ -57,6 +58,7 @@ public class AuthService{
                     .role("USER")
                     .profileImage(userInfo.getPicture())
                     .build();
+            early = true;
 
             userRepository.save(user);
         }
@@ -69,6 +71,7 @@ public class AuthService{
         TokenResponseDto tokenResponseDto = TokenResponseDto.builder()
                 .message("OK")
                 .code(200)
+                .early(early)
                 .accessToken(jwtTokenProvider.createAccessToken(
                         userLoginData.get().getId(),
                         String.valueOf(userLoginData.get().getRole())))
@@ -103,6 +106,8 @@ public class AuthService{
                     .profileImage(userInfo.getKakao_account().getProfile().getProfile_image_url())
                     .build();
 
+            early = true;
+
             userRepository.save(user);
         }
 
@@ -114,6 +119,7 @@ public class AuthService{
         TokenResponseDto tokenResponseDto = TokenResponseDto.builder()
                 .message("OK")
                 .code(200)
+                .early(early)
                 .accessToken(jwtTokenProvider.createAccessToken(
                         userLoginData.get().getId(),
                         String.valueOf(userLoginData.get().getRole())))
