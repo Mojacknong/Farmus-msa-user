@@ -1,8 +1,7 @@
 package modernfarmer.server.farmususer.user.service;
 
 import lombok.extern.slf4j.Slf4j;
-import modernfarmer.server.farmususer.global.config.s3.AmazonS3ResourceStorage;
-import modernfarmer.server.farmususer.global.config.s3.FileDetail;
+import modernfarmer.server.farmususer.global.config.s3.S3Uploader;
 import modernfarmer.server.farmususer.global.exception.notfound.NotFoundRefreshTokenException;
 import modernfarmer.server.farmususer.user.dto.response.ProfileImageResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
@@ -10,11 +9,13 @@ import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
 import modernfarmer.server.farmususer.user.repository.UserRepository;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.io.IOException;
 
 
 @Slf4j
@@ -24,26 +25,27 @@ public class UserService {
     public JwtTokenProvider jwtTokenProvider;
     public RedisTemplate<String, String> redisTemplate;
     public UserRepository userRepository;
-    private final AmazonS3ResourceStorage amazonS3ResourceStorage;
+    public final S3Uploader s3Uploader;
+
 
     @Autowired
-    public UserService(WebClient webClient, UserRepository userRepository, JwtTokenProvider jwtTokenProvider, RedisTemplate<String, String> redisTemplate, AmazonS3ResourceStorage amazonS3ResourceStoraget) {
+    public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider, RedisTemplate<String, String> redisTemplate,
+                       S3Uploader s3Uploader
+                       ) {
 
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.redisTemplate = redisTemplate;
-        this.amazonS3ResourceStorage = amazonS3ResourceStoraget;
+        this.s3Uploader = s3Uploader;
+
     }
+    @Transactional
+    public ResponseDto emitProfileImage(Long userId, MultipartFile multipartFile) throws IOException {
 
+        String imageUrl = s3Uploader.uploadFiles(multipartFile, "userprofileimage");
+        log.info(imageUrl);
 
-    public ResponseDto produceProfileImage(Long userId, MultipartFile multipartFile){
-
-
-        FileDetail fileDetail = FileDetail.multipartOf(multipartFile);
-        amazonS3ResourceStorage.store(fileDetail.getPath(), multipartFile);
-
-        log.info(String.valueOf(fileDetail));
-
+        userRepository.emitUserProfileImage(userId, imageUrl);
 
         ResponseDto responseDto = ResponseDto
                 .builder()
@@ -70,12 +72,7 @@ public class UserService {
         return profileImageResponseDto;
     }
 
-
-
-
-
-
-
+    @Transactional
     public ResponseDto deleteUser(Long userId){
 
         userRepository.deleteUser(userId);
@@ -90,7 +87,8 @@ public class UserService {
     }
 
 
-    public ResponseDto produceNickname(Long userId, String nickName){
+    @Transactional
+    public ResponseDto emitNickname(Long userId, String nickName){
 
         userRepository.updateUserNickname(nickName, userId);
 

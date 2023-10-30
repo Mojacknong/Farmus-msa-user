@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@Getter
 public class ResponseDto {
     private int code;
     private String message;

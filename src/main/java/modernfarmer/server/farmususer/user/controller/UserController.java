@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 @Slf4j
 @RestController
@@ -24,12 +25,12 @@ public class UserController {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @PostMapping(value = "/profileImage", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseDto produceProfileImage(HttpServletRequest request, @RequestPart("file") MultipartFile multipartFile){
+    @PostMapping(value = "/profileImage", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseDto produceProfileImage(HttpServletRequest request, @RequestPart("file") MultipartFile multipartFile) throws IOException {
 
         String userId = jwtTokenProvider.getUserId(request);
-
-        ResponseDto responseDto = userService.produceProfileImage(Long.valueOf(userId), multipartFile);
+        log.info(userId);
+        ResponseDto responseDto = userService.emitProfileImage(Long.valueOf(userId), multipartFile);
 
         return responseDto;
 
@@ -39,6 +40,7 @@ public class UserController {
     public ProfileImageResponseDto selectProfileImage(HttpServletRequest request){
 
         String userId = jwtTokenProvider.getUserId(request);
+
 
         ProfileImageResponseDto profileImageResponseDto = userService.selectProfileImage(Long.valueOf(userId));
 
@@ -59,21 +61,11 @@ public class UserController {
 
 
     @PostMapping(value = "/nickname")
-    public ResponseDto produceNickname(HttpServletRequest request, @RequestBody ProduceNicknameRequest produceNicknameRequest){
+    public ResponseDto emitNickname(HttpServletRequest request, @RequestBody ProduceNicknameRequest produceNicknameRequest){
 
         String userId = jwtTokenProvider.getUserId(request);
 
-        ResponseDto responseDto = userService.produceNickname(Long.valueOf(userId), produceNicknameRequest.getNickName());
-
-        return responseDto;
-    }
-
-    @PatchMapping(value = "/nickname")
-    public ResponseDto updateNickname(HttpServletRequest request, @RequestBody ProduceNicknameRequest produceNicknameRequest){
-
-        String userId = jwtTokenProvider.getUserId(request);
-
-        ResponseDto responseDto = userService.produceNickname(Long.valueOf(userId), produceNicknameRequest.getNickName());
+        ResponseDto responseDto = userService.emitNickname(Long.valueOf(userId), produceNicknameRequest.getNickName());
 
         return responseDto;
     }
