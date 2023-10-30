@@ -2,17 +2,14 @@ package modernfarmer.server.farmususer.user.dto.response;
 
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Builder
+@SuperBuilder
 @Getter
-public class TokenResponseDto {
-
-    private int code;
-
-    private String message;
+public class TokenResponseDto extends  ResponseDto{
 
     private String accessToken;
 

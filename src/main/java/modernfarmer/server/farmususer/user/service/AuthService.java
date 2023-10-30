@@ -28,7 +28,7 @@ public class AuthService{
     public UserRepository userRepository;
 
     private final WebClient webClient;
-    private boolean early = false;
+
 
     @Autowired
     public AuthService(WebClient webClient, UserRepository userRepository, JwtTokenProvider jwtTokenProvider, RedisTemplate<String, String> redisTemplate) {
@@ -41,6 +41,7 @@ public class AuthService{
     public TokenResponseDto googleLogin(String accessToken) {
 
         User user;
+        boolean early = false;
 
         Mono<GoogleUserResponseDto> userInfoMono = getUserGoogleInfo(accessToken);
         GoogleUserResponseDto userInfo = userInfoMono.block();
@@ -88,6 +89,7 @@ public class AuthService{
     public TokenResponseDto kakaoLogin(String accessToken) {
 
         User user;
+        boolean early = false;
         Mono<KakaoUserResponseDto> userInfoMono = getUserKakaoInfo(accessToken);
         KakaoUserResponseDto userInfo = userInfoMono.block();
 
