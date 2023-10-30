@@ -9,6 +9,7 @@ import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
 
 import modernfarmer.server.farmususer.user.service.UserService;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,7 +24,7 @@ public class UserController {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @PostMapping(value = "/profileImage")
+    @PostMapping(value = "/profileImage", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseDto produceProfileImage(HttpServletRequest request, @RequestPart("file") MultipartFile multipartFile){
 
         String userId = jwtTokenProvider.getUserId(request);
