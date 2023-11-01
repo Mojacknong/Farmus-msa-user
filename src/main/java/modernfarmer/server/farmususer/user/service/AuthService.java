@@ -47,7 +47,7 @@ public class AuthService{
         GoogleUserResponseDto userInfo = userInfoMono.block();
 
 
-        Optional<User> userData = userRepository.findByUsernumber(String.valueOf(userInfo.getId()));
+        Optional<User> userData = userRepository.findByUserNumber(String.valueOf(userInfo.getId()));
 
         log.info(String.valueOf(userInfo.getEmail()));
         log.info(String.valueOf(userInfo.getPicture()));
@@ -55,8 +55,8 @@ public class AuthService{
 
         if(userData.isEmpty()){
             user = User.builder()
-                    .usernumber(String.valueOf(userInfo.getId()))
-                    .role("USER")
+                    .userNumber(String.valueOf(userInfo.getId()))
+                    .roles("USER")
                     .profileImage(userInfo.getPicture())
                     .build();
             early = true;
@@ -64,7 +64,7 @@ public class AuthService{
             userRepository.save(user);
         }
 
-        Optional<User> userLoginData = userRepository.findByUsernumber(String.valueOf(userInfo.getId()));
+        Optional<User> userLoginData = userRepository.findByUserNumber(String.valueOf(userInfo.getId()));
 
 
         String refreshToken = jwtTokenProvider.createRefreshToken(userLoginData.get().getId());
@@ -75,7 +75,7 @@ public class AuthService{
                 .early(early)
                 .accessToken(jwtTokenProvider.createAccessToken(
                         userLoginData.get().getId(),
-                        String.valueOf(userLoginData.get().getRole())))
+                        String.valueOf(userLoginData.get().getRoles())))
                 .refreshToken(refreshToken)
                 .build();
 
@@ -99,12 +99,12 @@ public class AuthService{
         log.info(String.valueOf(userInfo.getKakao_account().getProfile().getNickname()));
 
 
-        Optional<User> userData = userRepository.findByUsernumber(String.valueOf(userInfo.getId()));
+        Optional<User> userData = userRepository.findByUserNumber(String.valueOf(userInfo.getId()));
 
         if(userData.isEmpty()){
             user = User.builder()
-                    .usernumber(String.valueOf(userInfo.getId()))
-                    .role("USER")
+                    .userNumber(String.valueOf(userInfo.getId()))
+                    .roles("USER")
                     .profileImage(userInfo.getKakao_account().getProfile().getProfile_image_url())
                     .build();
 
@@ -113,7 +113,7 @@ public class AuthService{
             userRepository.save(user);
         }
 
-        Optional<User> userLoginData = userRepository.findByUsernumber(String.valueOf(userInfo.getId()));
+        Optional<User> userLoginData = userRepository.findByUserNumber(String.valueOf(userInfo.getId()));
 
 
         String refreshToken = jwtTokenProvider.createRefreshToken(userLoginData.get().getId());
@@ -124,7 +124,7 @@ public class AuthService{
                 .early(early)
                 .accessToken(jwtTokenProvider.createAccessToken(
                         userLoginData.get().getId(),
-                        String.valueOf(userLoginData.get().getRole())))
+                        String.valueOf(userLoginData.get().getRoles())))
                 .refreshToken(refreshToken)
                 .build();
 
