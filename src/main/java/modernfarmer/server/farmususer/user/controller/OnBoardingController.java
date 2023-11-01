@@ -1,0 +1,40 @@
+package modernfarmer.server.farmususer.user.controller;
+
+
+import lombok.extern.slf4j.Slf4j;
+import modernfarmer.server.farmususer.user.dto.request.OnBoardingMotivationRequest;
+import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
+import modernfarmer.server.farmususer.user.service.OnBoardingService;
+import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import javax.servlet.http.HttpServletRequest;
+
+@Slf4j
+@RestController
+@RequestMapping("/api/user")
+public class OnBoardingController {
+
+    private final JwtTokenProvider jwtTokenProvider;
+    private final OnBoardingService onBoardingService;
+
+    @Autowired
+    public OnBoardingController( JwtTokenProvider jwtTokenProvider,OnBoardingService onBoardingService){
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.onBoardingService = onBoardingService;
+    }
+
+    @PostMapping(value = "/motivation")
+    public ResponseDto onBoardingMotivation(HttpServletRequest request, @Validated @RequestBody OnBoardingMotivationRequest onBoardingMotivationRequest)  {
+
+        String userId = jwtTokenProvider.getUserId(request);
+
+        ResponseDto responseDto = onBoardingService.onBoardingMotivation(Long.valueOf(userId), onBoardingMotivationRequest.getMotivation());
+
+        return responseDto;
+    }
+}

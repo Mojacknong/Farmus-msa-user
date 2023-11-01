@@ -18,6 +18,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.io.IOException;
 
 
+@Transactional
 @Slf4j
 @Service
 public class UserService {
@@ -39,7 +40,7 @@ public class UserService {
         this.s3Uploader = s3Uploader;
 
     }
-    @Transactional
+
     public ResponseDto emitProfileImage(Long userId, MultipartFile multipartFile) throws IOException {
 
         String imageUrl = s3Uploader.uploadFiles(multipartFile, "userprofileimage");
@@ -72,7 +73,7 @@ public class UserService {
         return profileImageResponseDto;
     }
 
-    @Transactional
+
     public ResponseDto deleteUser(Long userId){
 
         userRepository.deleteUser(userId);
@@ -87,7 +88,7 @@ public class UserService {
     }
 
 
-    @Transactional
+
     public ResponseDto emitNickname(Long userId, String nickName){
 
         userRepository.updateUserNickname(nickName, userId);

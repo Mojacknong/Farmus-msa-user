@@ -30,6 +30,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void emitUserProfileImage(@Param("userId") Long userId, @Param("profileImage") String profileImage);
 
 
+    @Modifying
+    @Query("update User as u set u.motivation= :motivation where u.id = :userId")
+    void insertUserMotivation(@Param("userId") Long userId, @Param("motivation") String motivation);
+
+
+
+
 
 
 
