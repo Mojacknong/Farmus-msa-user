@@ -3,6 +3,7 @@ package modernfarmer.server.farmususer.user.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import modernfarmer.server.farmususer.user.dto.request.OnBoardingMotivationRequest;
+import modernfarmer.server.farmususer.user.dto.response.BaseResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
 import modernfarmer.server.farmususer.user.service.OnBoardingService;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
@@ -29,11 +30,11 @@ public class OnBoardingController {
     }
 
     @PostMapping(value = "/motivation")
-    public ResponseDto onBoardingMotivation(HttpServletRequest request, @Validated @RequestBody OnBoardingMotivationRequest onBoardingMotivationRequest)  {
+    public BaseResponseDto onBoardingMotivation(HttpServletRequest request, @Validated @RequestBody OnBoardingMotivationRequest onBoardingMotivationRequest)  {
 
         String userId = jwtTokenProvider.getUserId(request);
 
-        ResponseDto responseDto = onBoardingService.onBoardingMotivation(Long.valueOf(userId), onBoardingMotivationRequest.getMotivation());
+        BaseResponseDto responseDto = onBoardingService.onBoardingMotivation(Long.valueOf(userId), onBoardingMotivationRequest.getMotivation());
 
         return responseDto;
     }

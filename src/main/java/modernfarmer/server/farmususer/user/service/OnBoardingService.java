@@ -2,6 +2,8 @@ package modernfarmer.server.farmususer.user.service;
 
 
 import lombok.extern.slf4j.Slf4j;
+import modernfarmer.server.farmususer.global.exception.success.SuccessMessage;
+import modernfarmer.server.farmususer.user.dto.response.BaseResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
 import modernfarmer.server.farmususer.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +23,18 @@ public class OnBoardingService {
         this.userRepository = userRepository;
     }
 
-    public ResponseDto onBoardingMotivation(Long userId, String motivation){
+    public BaseResponseDto onBoardingMotivation(Long userId, String motivation){
 
         userRepository.insertUserMotivation(userId, motivation);
 
-        ResponseDto responseDto = ResponseDto.builder()
-                .message("OK")
-                .code(200)
-                .build();
+//        ResponseDto responseDto = ResponseDto.builder()
+//                .message("OK")
+//                .code(200)
+//                .build();
 
-        return responseDto;
+        return new BaseResponseDto<>(SuccessMessage.SUCCESS);
+
+    //    return responseDto;
     }
 
 }
