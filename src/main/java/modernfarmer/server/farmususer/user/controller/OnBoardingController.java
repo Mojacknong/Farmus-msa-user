@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 @Slf4j
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/user/on-boarding")
 public class OnBoardingController {
 
     private final JwtTokenProvider jwtTokenProvider;
