@@ -5,8 +5,6 @@ import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "of")
-@ToString
-@Builder
 @Getter
 public class RefreshTokenResponseDto {
 

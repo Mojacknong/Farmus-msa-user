@@ -6,8 +6,6 @@ import lombok.experimental.SuperBuilder;
 
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "of")
-@ToString
-@Builder
 @Getter
 public class TokenResponseDto {
 

@@ -34,6 +34,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("update User as u set u.motivation= :motivation where u.id = :userId")
     void insertUserMotivation(@Param("userId") Long userId, @Param("motivation") String motivation);
 
+    @Modifying
+    @Query("update User as u set u.level= :level where u.id = :userId")
+    void insertUserLevel(@Param("userId") Long userId, @Param("level") String level);
+
 
 
 

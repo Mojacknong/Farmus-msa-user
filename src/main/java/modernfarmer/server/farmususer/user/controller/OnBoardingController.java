@@ -3,6 +3,7 @@ package modernfarmer.server.farmususer.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import modernfarmer.server.farmususer.user.dto.request.OnBoardingLevelRequest;
 import modernfarmer.server.farmususer.user.dto.request.OnBoardingMotivationRequest;
 import modernfarmer.server.farmususer.user.dto.response.BaseResponseDto;
 import modernfarmer.server.farmususer.user.service.OnBoardingService;
@@ -31,6 +32,16 @@ public class OnBoardingController {
         String userId = jwtTokenProvider.getUserId(request);
 
         BaseResponseDto responseDto = onBoardingService.onBoardingMotivation(Long.valueOf(userId), onBoardingMotivationRequest.getMotivation());
+
+        return responseDto;
+    }
+
+    @PostMapping(value = "/level")
+    public BaseResponseDto onBoardingLevel(HttpServletRequest request, @Validated @RequestBody OnBoardingLevelRequest onBoardingLevelRequest)  {
+
+        String userId = jwtTokenProvider.getUserId(request);
+
+        BaseResponseDto responseDto = onBoardingService.onBoardingLevel(Long.valueOf(userId), onBoardingLevelRequest);
 
         return responseDto;
     }
