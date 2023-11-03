@@ -71,10 +71,13 @@ public class OnBoardingService {
             return "NORMAL";
         } else if (time == 1 && isBeginner) {
             return "EASY";
+        } else if (time == 0 && (isExperienced && isBeginner)) {
+            return "EASY";
+        } else if (time == 0 && isExperienced) {
+            return "NORMAL";
+
         } else if (time == 0 && isAdvanced) {
             return "HARD";
-        } else if (time == 0 && (isExperienced || isBeginner)) {
-            return "EASY";
         }
 
         return "알 수 없음";
