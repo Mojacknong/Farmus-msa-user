@@ -2,10 +2,7 @@ package modernfarmer.server.farmususer.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import modernfarmer.server.farmususer.user.dto.request.ProduceNicknameRequest;
 import modernfarmer.server.farmususer.user.dto.response.BaseResponseDto;
-import modernfarmer.server.farmususer.user.dto.response.ProfileImageResponseDto;
-import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
 
 import modernfarmer.server.farmususer.user.service.UserService;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
@@ -26,12 +23,34 @@ public class UserController {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @PostMapping(value = "/profileImage", produces = MediaType.APPLICATION_JSON_VALUE)
-    public BaseResponseDto produceProfileImage(HttpServletRequest request, @RequestPart("file") MultipartFile multipartFile) throws IOException {
+//    @PostMapping(value = "/profileImage", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public BaseResponseDto produceProfileImage(HttpServletRequest request, @RequestPart("file") MultipartFile multipartFile) throws IOException {
+//
+//        String userId = jwtTokenProvider.getUserId(request);
+//        log.info(userId);
+//        BaseResponseDto responseDto = userService.emitProfileImage(Long.valueOf(userId), multipartFile);
+//
+//        return responseDto;
+//
+//    }
+
+
+//    @PostMapping(value = "/nickname")
+//    public BaseResponseDto emitNickname(HttpServletRequest request, @RequestBody ProduceNicknameRequest produceNicknameRequest){
+//
+//        String userId = jwtTokenProvider.getUserId(request);
+//
+//        BaseResponseDto responseDto = userService.emitNickname(Long.valueOf(userId), produceNicknameRequest.getNickName());
+//
+//        return responseDto;
+//    }
+
+    @PostMapping(value = "/select-information", produces = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponseDto selectProfileImageAndNickname(HttpServletRequest request, @RequestParam("file") MultipartFile multipartFile, @RequestParam("nickName")String nickName) throws IOException {
 
         String userId = jwtTokenProvider.getUserId(request);
         log.info(userId);
-        BaseResponseDto responseDto = userService.emitProfileImage(Long.valueOf(userId), multipartFile);
+        BaseResponseDto responseDto = userService.selectProfileImageAndNickname(Long.valueOf(userId), multipartFile,nickName);
 
         return responseDto;
 
@@ -61,15 +80,7 @@ public class UserController {
 
 
 
-    @PostMapping(value = "/nickname")
-    public BaseResponseDto emitNickname(HttpServletRequest request, @RequestBody ProduceNicknameRequest produceNicknameRequest){
 
-        String userId = jwtTokenProvider.getUserId(request);
-
-        BaseResponseDto responseDto = userService.emitNickname(Long.valueOf(userId), produceNicknameRequest.getNickName());
-
-        return responseDto;
-    }
 
 
     @DeleteMapping("/logout")

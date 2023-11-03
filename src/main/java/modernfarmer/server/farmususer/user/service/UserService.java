@@ -30,15 +30,43 @@ public class UserService {
     private final S3Uploader s3Uploader;
 
 
-    public BaseResponseDto emitProfileImage(Long userId, MultipartFile multipartFile) throws IOException {
+//    public BaseResponseDto emitProfileImage(Long userId, MultipartFile multipartFile) throws IOException {
+//
+//        String imageUrl = s3Uploader.uploadFiles(multipartFile, "userprofileimage");
+//        log.info(imageUrl);
+//
+//        userRepository.emitUserProfileImage(userId, imageUrl);
+//
+//        return BaseResponseDto.of(SuccessMessage.SUCCESS,null);
+//    }
 
-        String imageUrl = s3Uploader.uploadFiles(multipartFile, "userprofileimage");
-        log.info(imageUrl);
 
-        userRepository.emitUserProfileImage(userId, imageUrl);
 
+//    public BaseResponseDto emitNickname(Long userId, String nickName){
+//
+//        userRepository.updateUserNickname(nickName, userId);
+//
+//        return BaseResponseDto.of(SuccessMessage.SUCCESS,null);
+//    }
+
+    public BaseResponseDto selectProfileImageAndNickname(Long userId,MultipartFile multipartFile,
+                                                         String nickName) throws IOException {
+
+        if(multipartFile.isEmpty()){
+
+            userRepository.updateUserNickname(nickName,userId);
+
+        }else{
+            String imageUrl = s3Uploader.uploadFiles(multipartFile, "userprofileimage");
+            log.info(imageUrl);
+            userRepository.selectUserProfileAndNickname(userId,imageUrl,nickName);
+
+        }
         return BaseResponseDto.of(SuccessMessage.SUCCESS,null);
+
     }
+
+
 
     public BaseResponseDto selectProfileImage(Long userId){
 
@@ -57,12 +85,7 @@ public class UserService {
 
 
 
-    public BaseResponseDto emitNickname(Long userId, String nickName){
 
-        userRepository.updateUserNickname(nickName, userId);
-
-        return BaseResponseDto.of(SuccessMessage.SUCCESS,null);
-    }
 
 
     public BaseResponseDto logout(Long userId) {
