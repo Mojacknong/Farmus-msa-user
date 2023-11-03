@@ -49,9 +49,6 @@ public class User extends BaseEntity{
     @Column(name = "firebase_token", length = 100)
     private String firebaseToken;
 
-    @Size(max = 40)
-    @Column(name = "motivation", length = 40)
-    private String motivation;
 
     @Size(max = 10)
     @Column(name = "level", length = 10)
@@ -60,6 +57,9 @@ public class User extends BaseEntity{
 
     @OneToMany(mappedBy = "user")
     private Set<UserFirebaseToken> userFirebaseTokens = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserMotivation> userMotivations = new LinkedHashSet<>();
 
 
 

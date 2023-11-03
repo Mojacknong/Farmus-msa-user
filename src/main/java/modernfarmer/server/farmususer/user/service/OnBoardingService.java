@@ -27,7 +27,7 @@ public class OnBoardingService {
 
     public BaseResponseDto onBoardingMotivation(Long userId, String motivation){
 
-        userRepository.insertUserMotivation(userId, motivation);
+      //  userRepository.insertUserMotivation(userId, motivation);
 
         return BaseResponseDto.of(SuccessMessage.SUCCESS,null);
 
