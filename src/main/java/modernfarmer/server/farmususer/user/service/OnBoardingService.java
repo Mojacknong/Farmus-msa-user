@@ -6,8 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import modernfarmer.server.farmususer.global.exception.fail.ErrorMessage;
 import modernfarmer.server.farmususer.global.exception.success.SuccessMessage;
 import modernfarmer.server.farmususer.user.dto.request.OnBoardingLevelRequest;
+import modernfarmer.server.farmususer.user.dto.request.OnBoardingMotivationRequest;
 import modernfarmer.server.farmususer.user.dto.response.BaseResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.OnBoardingLevelResponse;
+import modernfarmer.server.farmususer.user.entity.User;
+import modernfarmer.server.farmususer.user.entity.UserMotivation;
+import modernfarmer.server.farmususer.user.repository.UserMotivationRepository;
 import modernfarmer.server.farmususer.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,9 +29,22 @@ public class OnBoardingService {
 
     private final UserRepository userRepository;
 
-    public BaseResponseDto onBoardingMotivation(Long userId, String motivation){
+    private final UserMotivationRepository userMotivationRepository;
 
-      //  userRepository.insertUserMotivation(userId, motivation);
+    public BaseResponseDto onBoardingMotivation(Long userId, OnBoardingMotivationRequest onBoardingMotivationRequest){
+
+        User user = User.builder().id(userId).build();
+
+        for(String motivations : onBoardingMotivationRequest.getMotivation()){
+
+            UserMotivation userMotivation = UserMotivation
+                    .builder()
+                    .user(user)
+                    .userMotivation(motivations)
+                    .build();
+
+            userMotivationRepository.save(userMotivation);
+        }
 
         return BaseResponseDto.of(SuccessMessage.SUCCESS,null);
 

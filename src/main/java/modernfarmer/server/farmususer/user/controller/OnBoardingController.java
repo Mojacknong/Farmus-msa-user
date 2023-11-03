@@ -31,7 +31,7 @@ public class OnBoardingController {
 
         String userId = jwtTokenProvider.getUserId(request);
 
-        BaseResponseDto responseDto = onBoardingService.onBoardingMotivation(Long.valueOf(userId), onBoardingMotivationRequest.getMotivation());
+        BaseResponseDto responseDto = onBoardingService.onBoardingMotivation(Long.valueOf(userId),onBoardingMotivationRequest);
 
         return responseDto;
     }
