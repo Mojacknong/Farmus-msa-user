@@ -2,13 +2,15 @@ package modernfarmer.server.farmususer.user.dto.response;
 
 
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "of")
-@SuperBuilder
+@ToString
+@Builder
 @Getter
-public class ResponseDto {
-    private int code;
-    private String message;
+public class RefreshTokenResponseDto {
+
+    private String accessToken;
+
+    private String refreshToken;
 }

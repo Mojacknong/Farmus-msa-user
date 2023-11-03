@@ -1,6 +1,7 @@
 package modernfarmer.server.farmususer.user.controller;
 
-import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
+import lombok.RequiredArgsConstructor;
+import modernfarmer.server.farmususer.user.dto.response.BaseResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
 import modernfarmer.server.farmususer.user.service.AuthService;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/user/auth")
 public class AuthController {
@@ -18,18 +20,12 @@ public class AuthController {
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    public AuthController(AuthService authService, JwtTokenProvider jwtTokenProvider){
-        this.authService = authService;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
-
     @PostMapping(value = "/kakao-login")
-    public TokenResponseDto kakaoLogin(HttpServletRequest request)  {
+    public BaseResponseDto kakaoLogin(HttpServletRequest request)  {
 
         String accessToken = jwtTokenProvider.resolveToken(request);
 
-        TokenResponseDto reissueTokenResponseDto = authService.kakaoLogin(accessToken);
+        BaseResponseDto reissueTokenResponseDto = authService.kakaoLogin(accessToken);
 
         LOGGER.info("카카오 로그인 완료");
 
@@ -38,11 +34,11 @@ public class AuthController {
   
 
     @PostMapping(value = "/google-login")
-    public TokenResponseDto googleLogin(HttpServletRequest request)  {
+    public BaseResponseDto googleLogin(HttpServletRequest request)  {
 
         String accessToken = jwtTokenProvider.resolveToken(request);
 
-        TokenResponseDto tokenResponseDto = authService.googleLogin(accessToken);
+        BaseResponseDto tokenResponseDto = authService.googleLogin(accessToken);
 
         LOGGER.info("구글 로그인 완료");
 

@@ -1,7 +1,10 @@
 package modernfarmer.server.farmususer.user.service;
 
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import modernfarmer.server.farmususer.global.exception.success.SuccessMessage;
+import modernfarmer.server.farmususer.user.dto.response.BaseResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.GoogleUserResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.KakaoUserResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
@@ -17,35 +20,28 @@ import reactor.core.publisher.Mono;
 import java.util.Optional;
 
 
+
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class AuthService{
 
 
-    public JwtTokenProvider jwtTokenProvider;
-    public RedisTemplate<String, String> redisTemplate;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final RedisTemplate<String, String> redisTemplate;
 
-    public UserRepository userRepository;
+    private final UserRepository userRepository;
 
     private final WebClient webClient;
 
 
-    @Autowired
-    public AuthService(WebClient webClient, UserRepository userRepository, JwtTokenProvider jwtTokenProvider, RedisTemplate<String, String> redisTemplate) {
-        this.webClient = webClient;
-        this.userRepository = userRepository;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.redisTemplate = redisTemplate;
-    }
-
-    public TokenResponseDto googleLogin(String accessToken) {
+    public BaseResponseDto googleLogin(String accessToken) {
 
         User user;
         boolean early = false;
 
         Mono<GoogleUserResponseDto> userInfoMono = getUserGoogleInfo(accessToken);
         GoogleUserResponseDto userInfo = userInfoMono.block();
-
 
         Optional<User> userData = userRepository.findByUserNumber(String.valueOf(userInfo.getId()));
 
@@ -69,24 +65,23 @@ public class AuthService{
 
         String refreshToken = jwtTokenProvider.createRefreshToken(userLoginData.get().getId());
 
-        TokenResponseDto tokenResponseDto = TokenResponseDto.builder()
-                .message("OK")
-                .code(200)
-                .early(early)
-                .accessToken(jwtTokenProvider.createAccessToken(
-                        userLoginData.get().getId(),
-                        String.valueOf(userLoginData.get().getRoles())))
-                .refreshToken(refreshToken)
-                .build();
-
+        BaseResponseDto baseResponseDto = BaseResponseDto.of(
+                SuccessMessage.SUCCESS,
+                TokenResponseDto.of(
+                        jwtTokenProvider.createAccessToken(
+                                userLoginData.get().getId(),
+                                String.valueOf(userLoginData.get().getRoles())),
+                        refreshToken,
+                        early
+                )
+        );
 
         redisTemplate.opsForValue().set(String.valueOf(userLoginData.get().getId()),refreshToken);
 
-
-        return tokenResponseDto;
+        return baseResponseDto;
     }
 
-    public TokenResponseDto kakaoLogin(String accessToken) {
+    public BaseResponseDto kakaoLogin(String accessToken) {
 
         User user;
         boolean early = false;
@@ -118,21 +113,21 @@ public class AuthService{
 
         String refreshToken = jwtTokenProvider.createRefreshToken(userLoginData.get().getId());
 
-        TokenResponseDto tokenResponseDto = TokenResponseDto.builder()
-                .message("OK")
-                .code(200)
-                .early(early)
-                .accessToken(jwtTokenProvider.createAccessToken(
-                        userLoginData.get().getId(),
-                        String.valueOf(userLoginData.get().getRoles())))
-                .refreshToken(refreshToken)
-                .build();
 
+        BaseResponseDto baseResponseDto = BaseResponseDto.of(
+                SuccessMessage.SUCCESS,
+                TokenResponseDto.of(
+                    jwtTokenProvider.createAccessToken(
+                        userLoginData.get().getId(),
+                        String.valueOf(userLoginData.get().getRoles())),
+                    refreshToken,
+                    early
+                )
+        );
 
         redisTemplate.opsForValue().set(String.valueOf(userLoginData.get().getId()),refreshToken);
 
-
-        return tokenResponseDto;
+        return baseResponseDto;
     }
 
     public Mono<KakaoUserResponseDto> getUserKakaoInfo(String accessToken) {

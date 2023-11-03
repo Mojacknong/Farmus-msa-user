@@ -1,10 +1,11 @@
 package modernfarmer.server.farmususer.user.service;
 
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import modernfarmer.server.farmususer.global.exception.fail.ErrorMessage;
 import modernfarmer.server.farmususer.global.exception.success.SuccessMessage;
 import modernfarmer.server.farmususer.user.dto.response.BaseResponseDto;
-import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
 import modernfarmer.server.farmususer.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,29 +13,21 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+
+@RequiredArgsConstructor
 @Transactional
 @Slf4j
 @Service
 public class OnBoardingService {
-    public UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    public OnBoardingService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public BaseResponseDto onBoardingMotivation(Long userId, String motivation){
 
         userRepository.insertUserMotivation(userId, motivation);
 
-//        ResponseDto responseDto = ResponseDto.builder()
-//                .message("OK")
-//                .code(200)
-//                .build();
+        return BaseResponseDto.of(SuccessMessage.SUCCESS,null);
 
-        return new BaseResponseDto<>(SuccessMessage.SUCCESS);
-
-    //    return responseDto;
     }
 
 }

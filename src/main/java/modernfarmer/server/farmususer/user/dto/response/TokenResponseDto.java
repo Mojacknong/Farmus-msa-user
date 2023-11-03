@@ -5,11 +5,11 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "of")
 @ToString
-@SuperBuilder
+@Builder
 @Getter
-public class TokenResponseDto extends  ResponseDto{
+public class TokenResponseDto {
 
     private String accessToken;
 
