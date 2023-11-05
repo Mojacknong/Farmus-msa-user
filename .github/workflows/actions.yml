@@ -52,6 +52,7 @@ jobs:
           echo "${{ secrets.PROPERTIES_YML }}" > ./application.yml
         shell: bash
 
+
       # 빌드(테스트 스킵)
       - name: Build with Gradle
         run: ./gradlew build -x test
