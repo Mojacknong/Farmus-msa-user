@@ -1,6 +1,7 @@
 package modernfarmer.server.farmususer.global.exception;
 
 import lombok.*;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -8,6 +9,6 @@ import lombok.*;
 @ToString
 public class ErrorResponse {
 
-    private int code;
+    private HttpStatus code;
     private String message;
 }

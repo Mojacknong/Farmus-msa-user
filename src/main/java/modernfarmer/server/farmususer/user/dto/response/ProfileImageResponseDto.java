@@ -5,10 +5,9 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "of")
 @Getter
-@SuperBuilder
-public class ProfileImageResponseDto extends  ResponseDto{
+public class ProfileImageResponseDto{
 
     private String profileImage;
 }
