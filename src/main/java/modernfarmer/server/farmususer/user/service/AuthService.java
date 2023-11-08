@@ -38,7 +38,7 @@ public class AuthService{
     public BaseResponseDto googleLogin(String accessToken) {
 
         User user;
-        boolean early = false;
+        boolean early;
 
         Mono<GoogleUserResponseDto> userInfoMono = getUserGoogleInfo(accessToken);
         GoogleUserResponseDto userInfo = userInfoMono.block();
@@ -54,16 +54,17 @@ public class AuthService{
                     .userNumber(String.valueOf(userInfo.getId()))
                     .roles("USER")
                     .profileImage(userInfo.getPicture())
+                    .early(true)
                     .build();
-            early = true;
 
             userRepository.save(user);
         }
 
         Optional<User> userLoginData = userRepository.findByUserNumber(String.valueOf(userInfo.getId()));
 
-
         String refreshToken = jwtTokenProvider.createRefreshToken(userLoginData.get().getId());
+
+        early = userLoginData.get().isEarly();
 
         BaseResponseDto baseResponseDto = BaseResponseDto.of(
                 SuccessMessage.SUCCESS,
@@ -84,7 +85,7 @@ public class AuthService{
     public BaseResponseDto kakaoLogin(String accessToken) {
 
         User user;
-        boolean early = false;
+        boolean early;
         Mono<KakaoUserResponseDto> userInfoMono = getUserKakaoInfo(accessToken);
         KakaoUserResponseDto userInfo = userInfoMono.block();
 
@@ -96,23 +97,23 @@ public class AuthService{
 
         Optional<User> userData = userRepository.findByUserNumber(String.valueOf(userInfo.getId()));
 
+
         if(userData.isEmpty()){
             user = User.builder()
                     .userNumber(String.valueOf(userInfo.getId()))
                     .roles("USER")
                     .profileImage(userInfo.getKakao_account().getProfile().getProfile_image_url())
+                    .early(true)
                     .build();
-
-            early = true;
 
             userRepository.save(user);
         }
 
         Optional<User> userLoginData = userRepository.findByUserNumber(String.valueOf(userInfo.getId()));
 
+        early = userLoginData.get().isEarly();
 
         String refreshToken = jwtTokenProvider.createRefreshToken(userLoginData.get().getId());
-
 
         BaseResponseDto baseResponseDto = BaseResponseDto.of(
                 SuccessMessage.SUCCESS,

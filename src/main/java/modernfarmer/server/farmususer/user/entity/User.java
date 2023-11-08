@@ -11,7 +11,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Getter
-@Setter
 @Entity
 @Builder
 @NoArgsConstructor
@@ -23,9 +22,6 @@ public class User extends BaseEntity{
     @Column(name = "user_id", nullable = false)
     private Long id;
 
-    @Size(max = 45)
-    @Column(name = "username", length = 45)
-    private String username;
 
     @Size(max = 45)
     @Column(name = "nickname", length = 45)
@@ -48,6 +44,9 @@ public class User extends BaseEntity{
     @Size(max = 100)
     @Column(name = "firebase_token", length = 100)
     private String firebaseToken;
+
+    @Column(name = "early")
+    private boolean early;
 
 
     @Size(max = 10)
