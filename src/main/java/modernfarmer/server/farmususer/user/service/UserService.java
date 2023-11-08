@@ -75,6 +75,13 @@ public class UserService {
         return BaseResponseDto.of(SuccessMessage.SUCCESS, ProfileImageResponseDto.of(userProfileImage));
     }
 
+    public BaseResponseDto signUpComlete(Long userId){
+
+       userRepository.updateEarly(userId);
+
+       return BaseResponseDto.of(SuccessMessage.SUCCESS, null);
+    }
+
 
     public BaseResponseDto deleteUser(Long userId){
 

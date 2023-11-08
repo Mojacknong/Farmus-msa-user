@@ -56,6 +56,18 @@ public class UserController {
 
     }
 
+    @PatchMapping(value = "/sign-up/complete", produces = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponseDto signUpComplete(HttpServletRequest request)  {
+
+        String userId = jwtTokenProvider.getUserId(request);
+
+
+        BaseResponseDto responseDto = userService.signUpComlete(Long.valueOf(userId));
+
+        return responseDto;
+
+    }
+
     @GetMapping(value = "/profileImage")
     public BaseResponseDto selectProfileImage(HttpServletRequest request){
 
