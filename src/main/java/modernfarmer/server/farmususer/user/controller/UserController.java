@@ -2,6 +2,7 @@ package modernfarmer.server.farmususer.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import modernfarmer.server.farmususer.user.dto.request.ProduceNicknameRequest;
 import modernfarmer.server.farmususer.user.dto.response.BaseResponseDto;
 
 import modernfarmer.server.farmususer.user.service.UserService;
@@ -35,15 +36,15 @@ public class UserController {
 //    }
 
 
-//    @PostMapping(value = "/nickname")
-//    public BaseResponseDto emitNickname(HttpServletRequest request, @RequestBody ProduceNicknameRequest produceNicknameRequest){
-//
-//        String userId = jwtTokenProvider.getUserId(request);
-//
-//        BaseResponseDto responseDto = userService.emitNickname(Long.valueOf(userId), produceNicknameRequest.getNickName());
-//
-//        return responseDto;
-//    }
+    @PostMapping(value = "/nickname")
+    public BaseResponseDto emitNickname(HttpServletRequest request, @RequestBody ProduceNicknameRequest produceNicknameRequest){
+
+        String userId = jwtTokenProvider.getUserId(request);
+
+        BaseResponseDto responseDto = userService.emitNickname(Long.valueOf(userId), produceNicknameRequest.getNickName());
+
+        return responseDto;
+    }
 
     @PostMapping(value = "/select-information", produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponseDto selectProfileImageAndNickname(HttpServletRequest request, @RequestParam(value = "file", required = false) MultipartFile multipartFile, @RequestParam("nickName")String nickName) throws IOException {

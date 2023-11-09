@@ -42,12 +42,12 @@ public class UserService {
 
 
 
-//    public BaseResponseDto emitNickname(Long userId, String nickName){
-//
-//        userRepository.updateUserNickname(nickName, userId);
-//
-//        return BaseResponseDto.of(SuccessMessage.SUCCESS,null);
-//    }
+    public BaseResponseDto emitNickname(Long userId, String nickName){
+
+        userRepository.updateUserNickname(nickName, userId);
+
+        return BaseResponseDto.of(SuccessMessage.SUCCESS,null);
+    }
 
     public BaseResponseDto selectProfileImageAndNickname(Long userId,MultipartFile multipartFile,
                                                          String nickName) throws IOException {
