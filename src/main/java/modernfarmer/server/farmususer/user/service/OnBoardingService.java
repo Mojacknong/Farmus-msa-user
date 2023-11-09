@@ -60,23 +60,23 @@ public class OnBoardingService {
 
     }
 
-    private String recommendAlgorithms(int time, ArrayList<String> skills) {
+    private String recommendAlgorithms(int time,String skill) {
         boolean isIntermediate = false;
         boolean isAdvanced = false;
         boolean isExperienced = false;
         boolean isBeginner = false;
 
-        for (String skill : skills) {
-            if ("중급자".equals(skill)) {
-                isIntermediate = true;
-            } else if ("고수".equals(skill)) {
-                isAdvanced = true;
-            } else if ("경험자".equals(skill)) {
-                isExperienced = true;
-            } else if ("초급자".equals(skill)) {
-                isBeginner = true;
-            }
+
+        if ("중급자".equals(skill)) {
+            isIntermediate = true;
+        } else if ("고수".equals(skill)) {
+            isAdvanced = true;
+        } else if ("경험자".equals(skill)) {
+            isExperienced = true;
+        } else if ("초급자".equals(skill)) {
+            isBeginner = true;
         }
+
 
         if (time == 2 && (isIntermediate || isAdvanced)) {
             return "HARD";

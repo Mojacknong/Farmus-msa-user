@@ -17,5 +17,5 @@ public class OnBoardingLevelRequest {
     private int time;
 
     @NotNull(message = "null 값을 가지면 안됩니다.")
-    private ArrayList<String> skill;
+    private String skill;
 }
