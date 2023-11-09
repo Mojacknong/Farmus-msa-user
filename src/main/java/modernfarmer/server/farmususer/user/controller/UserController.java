@@ -46,7 +46,7 @@ public class UserController {
 //    }
 
     @PostMapping(value = "/select-information", produces = MediaType.APPLICATION_JSON_VALUE)
-    public BaseResponseDto selectProfileImageAndNickname(HttpServletRequest request, @RequestParam("file") MultipartFile multipartFile, @RequestParam("nickName")String nickName) throws IOException {
+    public BaseResponseDto selectProfileImageAndNickname(HttpServletRequest request, @RequestParam(value = "file", required = false) MultipartFile multipartFile, @RequestParam("nickName")String nickName) throws IOException {
 
         String userId = jwtTokenProvider.getUserId(request);
         log.info(userId);
