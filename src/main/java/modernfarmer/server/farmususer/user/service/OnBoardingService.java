@@ -67,13 +67,13 @@ public class OnBoardingService {
         boolean isBeginner = false;
 
 
-        if ("중급자".equals(skill)) {
+        if ("홈파밍 중급".equals(skill)) {
             isIntermediate = true;
-        } else if ("고수".equals(skill)) {
+        } else if ("홈파밍 고수".equals(skill)) {
             isAdvanced = true;
-        } else if ("경험자".equals(skill)) {
+        } else if ("홈파밍 초보".equals(skill)) {
             isExperienced = true;
-        } else if ("초급자".equals(skill)) {
+        } else if ("홈파밍 입문".equals(skill)) {
             isBeginner = true;
         }
 
