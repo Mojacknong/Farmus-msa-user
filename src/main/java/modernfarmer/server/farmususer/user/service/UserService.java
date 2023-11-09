@@ -52,7 +52,7 @@ public class UserService {
     public BaseResponseDto selectProfileImageAndNickname(Long userId,MultipartFile multipartFile,
                                                          String nickName) throws IOException {
 
-        if(multipartFile == null){
+        if(multipartFile.isEmpty()){
 
             userRepository.updateUserNickname(nickName,userId);
 
