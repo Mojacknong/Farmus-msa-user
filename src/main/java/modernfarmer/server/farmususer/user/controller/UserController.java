@@ -122,5 +122,13 @@ public class UserController {
         return reissueTokenResponseDto;
     }
 
+    @GetMapping(value = "/all-user")
+    public BaseResponseDto allUser()  {
+
+        BaseResponseDto reissueTokenResponseDto = userService.allUser();
+
+        return reissueTokenResponseDto;
+    }
+
 
 }

@@ -5,9 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import modernfarmer.server.farmususer.global.config.s3.S3Uploader;
 import modernfarmer.server.farmususer.global.exception.fail.ErrorMessage;
 import modernfarmer.server.farmususer.global.exception.success.SuccessMessage;
-import modernfarmer.server.farmususer.user.dto.response.BaseResponseDto;
-import modernfarmer.server.farmususer.user.dto.response.ProfileImageResponseDto;
-import modernfarmer.server.farmususer.user.dto.response.RefreshTokenResponseDto;
+import modernfarmer.server.farmususer.user.dto.response.*;
+import modernfarmer.server.farmususer.user.entity.User;
 import modernfarmer.server.farmususer.user.repository.UserRepository;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -92,7 +93,16 @@ public class UserService {
 
 
 
+     public BaseResponseDto allUser() {
 
+        List<User> userList = userRepository.findAllBy();
+         List<AllUserDto> userResponseList = userList.stream()
+                 .map(user -> AllUserDto.of(user.getId(), user.getNickname(), user.getProfileImage()))
+                 .collect(Collectors.toList());
+
+        return BaseResponseDto.of(SuccessMessage.SUCCESS, AllUserResponseDto.of(userResponseList));
+
+     }
 
 
     public BaseResponseDto logout(Long userId) {
@@ -118,7 +128,10 @@ public class UserService {
 
         }
         return BaseResponseDto.of(ErrorMessage.REFRESH_NOTIFICATION_ERROR);
+
     }
+
+
 
     public void deleteValueByKey(String key) {
         redisTemplate.delete(key);

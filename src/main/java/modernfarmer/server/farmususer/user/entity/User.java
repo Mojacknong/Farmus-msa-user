@@ -41,9 +41,6 @@ public class User extends BaseEntity{
     @Column(name = "user_number", nullable = false, length = 30)
     private String userNumber;
 
-    @Size(max = 100)
-    @Column(name = "firebase_token", length = 100)
-    private String firebaseToken;
 
     @Column(name = "early")
     private boolean early;
@@ -54,10 +51,10 @@ public class User extends BaseEntity{
     private String level;
 
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",  fetch = FetchType.LAZY)
     private Set<UserFirebaseToken> userFirebaseTokens = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<UserMotivation> userMotivations = new LinkedHashSet<>();
 
 
