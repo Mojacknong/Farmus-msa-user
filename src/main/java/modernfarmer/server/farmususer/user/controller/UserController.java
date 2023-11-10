@@ -125,9 +125,7 @@ public class UserController {
     @GetMapping(value = "/all-user")
     public BaseResponseDto allUser()  {
 
-        BaseResponseDto reissueTokenResponseDto = userService.allUser();
-
-        return reissueTokenResponseDto;
+        return userService.allUser();
     }
 
     @GetMapping(value = "/specific-user")
