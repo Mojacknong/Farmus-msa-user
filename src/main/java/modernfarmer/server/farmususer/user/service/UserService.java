@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -104,6 +105,22 @@ public class UserService {
 
      }
 
+    public BaseResponseDto specificUser(Long userId) {
+
+
+        Optional<User> user = userRepository.findById(userId);
+
+        if(user.isEmpty()){
+            return BaseResponseDto.of(ErrorMessage.NO_USER_DATA);
+        }
+
+        return BaseResponseDto.of(SuccessMessage.SUCCESS,
+                SpecificUserResponseDto.of(user.get().getId(),
+                user.get().getNickname(),
+                user.get().getProfileImage()));
+
+    }
+
 
     public BaseResponseDto logout(Long userId) {
 
@@ -130,8 +147,6 @@ public class UserService {
         return BaseResponseDto.of(ErrorMessage.REFRESH_NOTIFICATION_ERROR);
 
     }
-
-
 
     public void deleteValueByKey(String key) {
         redisTemplate.delete(key);

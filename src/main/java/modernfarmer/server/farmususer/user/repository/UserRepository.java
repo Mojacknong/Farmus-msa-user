@@ -49,9 +49,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("update User as u set u.level= :level where u.id = :userId")
     void insertUserLevel(@Param("userId") Long userId, @Param("level") String level);
 
-
-    //@Query("select u.id, u.nickname, u.profileImage, u.roles, u.userNumber, u.early, u.level from User u")
     List<User> findAllBy();
+
+    Optional<User> findById(Long userId);
+
+
 
 
 

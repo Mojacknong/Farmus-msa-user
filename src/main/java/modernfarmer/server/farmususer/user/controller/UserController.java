@@ -130,5 +130,13 @@ public class UserController {
         return reissueTokenResponseDto;
     }
 
+    @GetMapping(value = "/specific-user")
+    public BaseResponseDto specificUser(@RequestParam("userId") Long userId)  {
+
+       // String userId = jwtTokenProvider.getUserId(request);
+        return userService.specificUser(userId);
+    }
+
+
 
 }
