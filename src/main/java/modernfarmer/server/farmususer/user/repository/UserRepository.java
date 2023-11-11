@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -47,6 +48,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("update User as u set u.level= :level where u.id = :userId")
     void insertUserLevel(@Param("userId") Long userId, @Param("level") String level);
+
+    List<User> findAllBy();
+
+    Optional<User> findById(Long userId);
+
+
+
 
 
 
