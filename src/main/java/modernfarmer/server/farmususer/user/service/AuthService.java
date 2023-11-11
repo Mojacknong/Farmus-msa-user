@@ -40,20 +40,15 @@ public class AuthService{
         User user;
         boolean early;
 
-        Mono<GoogleUserResponseDto> userInfoMono = getUserGoogleInfo(accessToken);
+        Mono<GoogleUserResponseDto> userInfoMono = getUserInfo(accessToken, "https://www.googleapis.com/oauth2/v2/userinfo", GoogleUserResponseDto.class);
         GoogleUserResponseDto userInfo = userInfoMono.block();
 
         Optional<User> userData = userRepository.findByUserNumber(String.valueOf(userInfo.getId()));
-
-        log.info(String.valueOf(userInfo.getEmail()));
-        log.info(String.valueOf(userInfo.getPicture()));
-        log.info(String.valueOf(userInfo.getId()));
 
         if(userData.isEmpty()){
             user = User.builder()
                     .userNumber(String.valueOf(userInfo.getId()))
                     .roles("USER")
-                    .profileImage(userInfo.getPicture())
                     .early(true)
                     .build();
 
@@ -86,14 +81,8 @@ public class AuthService{
 
         User user;
         boolean early;
-        Mono<KakaoUserResponseDto> userInfoMono = getUserKakaoInfo(accessToken);
+        Mono<KakaoUserResponseDto> userInfoMono = getUserInfo(accessToken, "https://kapi.kakao.com/v2/user/me", KakaoUserResponseDto.class);
         KakaoUserResponseDto userInfo = userInfoMono.block();
-
-
-        log.info(String.valueOf(userInfo.getKakao_account().getEmail()));
-        log.info(String.valueOf(userInfo.getKakao_account().getProfile().getProfile_image_url()));
-        log.info(String.valueOf(userInfo.getKakao_account().getProfile().getNickname()));
-
 
         Optional<User> userData = userRepository.findByUserNumber(String.valueOf(userInfo.getId()));
 
@@ -102,7 +91,6 @@ public class AuthService{
             user = User.builder()
                     .userNumber(String.valueOf(userInfo.getId()))
                     .roles("USER")
-                    .profileImage(userInfo.getKakao_account().getProfile().getProfile_image_url())
                     .early(true)
                     .build();
 
@@ -131,21 +119,13 @@ public class AuthService{
         return baseResponseDto;
     }
 
-    public Mono<KakaoUserResponseDto> getUserKakaoInfo(String accessToken) {
+    public <T> Mono<T> getUserInfo(String accessToken, String apiUrl, Class<T> responseType) {
         return webClient
                 .get()
-                .uri("https://kapi.kakao.com/v2/user/me") // 카카오 사용자 정보 엔드포인트
+                .uri(apiUrl)
                 .headers(headers -> headers.setBearerAuth(accessToken))
                 .retrieve()
-                .bodyToMono(KakaoUserResponseDto.class);
+                .bodyToMono(responseType);
     }
 
-    public Mono<GoogleUserResponseDto> getUserGoogleInfo(String accessToken) {
-        return webClient
-                .get()
-                .uri("https://www.googleapis.com/oauth2/v2/userinfo") // 카카오 사용자 정보 엔드포인트
-                .headers(headers -> headers.setBearerAuth(accessToken))
-                .retrieve()
-                .bodyToMono(GoogleUserResponseDto.class);
-    }
 }

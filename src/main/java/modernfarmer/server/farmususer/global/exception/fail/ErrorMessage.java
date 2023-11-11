@@ -9,8 +9,9 @@ import static org.springframework.http.HttpStatus.*;
 public enum ErrorMessage {
 
     INTERVAL_SERVER_ERROR(1001,  "요청을 처리하는 과정에서 서버가 예상하지 못한 오류가 발생하였습니다."),
-    REFRESH_NOTIFICATION_ERROR(4017,  "Refresh Token 인증 오류"),
-    NO_USER_DATA(1002,  "유저에 대한 정보가 없습니다.");
+    REFRESH_NOTIFICATION_ERROR(1002,  "Refresh Token 인증 오류"),
+    NO_USER_DATA(1003,  "유저에 대한 정보가 없습니다."),
+    NO_MOTIVATION_DATA(1004,  "동기에 대한 정보가 없습니다.");
 
 
 
