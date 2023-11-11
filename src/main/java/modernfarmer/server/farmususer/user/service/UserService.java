@@ -9,6 +9,7 @@ import modernfarmer.server.farmususer.user.dto.response.*;
 import modernfarmer.server.farmususer.user.entity.User;
 import modernfarmer.server.farmususer.user.repository.UserRepository;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
+import modernfarmer.server.farmususer.user.util.TimeCalculator;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ public class UserService {
     private final RedisTemplate<String, String> redisTemplate;
     private final UserRepository userRepository;
     private final S3Uploader s3Uploader;
+    private final TimeCalculator timeCalculator;
 
 
 //    public BaseResponseDto emitProfileImage(Long userId, MultipartFile multipartFile) throws IOException {
@@ -41,6 +43,19 @@ public class UserService {
 //
 //        return BaseResponseDto.of(SuccessMessage.SUCCESS,null);
 //    }
+
+    public BaseResponseDto getUser(Long userId){
+
+        Optional<User> user = userRepository.findById(userId);
+
+        if(user.isEmpty()){
+            return BaseResponseDto.of(ErrorMessage.NO_USER_DATA);
+        }
+
+        long dDay = timeCalculator.calFromToday(user.get().getCreatedAt());
+
+        return BaseResponseDto.of(SuccessMessage.SUCCESS, GetUserResponseDto.of(user.get().getNickname(),user.get().getProfileImage(),dDay));
+    }
 
 
 

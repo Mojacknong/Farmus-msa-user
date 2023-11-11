@@ -35,6 +35,16 @@ public class UserController {
 //
 //    }
 
+    @GetMapping
+    public BaseResponseDto getUser(HttpServletRequest request){
+
+        String userId = jwtTokenProvider.getUserId(request);
+
+        return userService.getUser(Long.valueOf(userId));
+    }
+
+
+
 
     @PostMapping(value = "/nickname")
     public BaseResponseDto emitNickname(HttpServletRequest request, @RequestBody ProduceNicknameRequest produceNicknameRequest){
@@ -91,11 +101,6 @@ public class UserController {
         return responseDto;
     }
 
-
-
-
-
-
     @DeleteMapping("/logout")
     public BaseResponseDto logout(HttpServletRequest request)  {
 
@@ -134,7 +139,5 @@ public class UserController {
        // String userId = jwtTokenProvider.getUserId(request);
         return userService.specificUser(userId);
     }
-
-
 
 }
