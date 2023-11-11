@@ -9,16 +9,17 @@ import modernfarmer.server.farmususer.user.dto.request.OnBoardingLevelRequest;
 import modernfarmer.server.farmususer.user.dto.request.OnBoardingMotivationRequest;
 import modernfarmer.server.farmususer.user.dto.response.BaseResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.OnBoardingLevelResponse;
+import modernfarmer.server.farmususer.user.entity.Motivation;
 import modernfarmer.server.farmususer.user.entity.User;
 import modernfarmer.server.farmususer.user.entity.UserMotivation;
+import modernfarmer.server.farmususer.user.repository.MotivationRepository;
 import modernfarmer.server.farmususer.user.repository.UserMotivationRepository;
 import modernfarmer.server.farmususer.user.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
+import java.util.Optional;
 
 
 @RequiredArgsConstructor
@@ -31,16 +32,24 @@ public class OnBoardingService {
 
     private final UserMotivationRepository userMotivationRepository;
 
+    private final MotivationRepository motivationRepository;
+
     public BaseResponseDto onBoardingMotivation(Long userId, OnBoardingMotivationRequest onBoardingMotivationRequest){
 
         User user = User.builder().id(userId).build();
 
         for(String motivations : onBoardingMotivationRequest.getMotivation()){
 
+            Optional<Motivation> motivation = motivationRepository.findByMotivationReason(motivations);
+
+            if(motivation.isEmpty()){
+                return BaseResponseDto.of(ErrorMessage.NO_MOTIVATION_DATA);
+            }
+
             UserMotivation userMotivation = UserMotivation
                     .builder()
                     .user(user)
-                    .userMotivation(motivations)
+                    .motivation(motivation.get())
                     .build();
 
             userMotivationRepository.save(userMotivation);

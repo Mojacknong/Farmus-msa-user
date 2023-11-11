@@ -6,8 +6,6 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.time.Instant;
 
 @Builder
 @AllArgsConstructor
@@ -28,10 +26,18 @@ public class UserMotivation extends BaseEntity{
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Size(max = 40)
     @NotNull
-    @Column(name = "user_motivation", nullable = false, length = 40)
-    private String userMotivation;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "motivation_id", nullable = false)
+    private Motivation motivation;
+
+
+
+
+
+
+
 
 
 
