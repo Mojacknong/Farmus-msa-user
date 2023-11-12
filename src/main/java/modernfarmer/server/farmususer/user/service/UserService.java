@@ -66,7 +66,7 @@ public class UserService {
         return BaseResponseDto.of(SuccessMessage.SUCCESS,null);
     }
 
-    public BaseResponseDto selectProfileImageAndNickname(Long userId,MultipartFile multipartFile,
+    public BaseResponseDto selectProfileImageAndNickname(Long userId, MultipartFile multipartFile,
                                                          String nickName) throws IOException {
 
         if(multipartFile.isEmpty()){
