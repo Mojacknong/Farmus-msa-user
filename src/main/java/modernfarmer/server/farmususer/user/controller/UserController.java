@@ -127,6 +127,15 @@ public class UserController {
         return reissueTokenResponseDto;
     }
 
+    @PatchMapping(value = "/delete/user-profile")
+    public BaseResponseDto deleteUserProfile(HttpServletRequest request)  {
+
+        String userId = jwtTokenProvider.getUserId(request);
+
+        return userService.deleteUserProfile(Long.valueOf(userId));
+    }
+
+
     @GetMapping(value = "/all-user")
     public BaseResponseDto allUser()  {
 

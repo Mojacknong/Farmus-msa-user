@@ -120,6 +120,15 @@ public class UserService {
 
      }
 
+    public BaseResponseDto deleteUserProfile(Long userId) {
+
+        userRepository.updateUserProfileDefault(userId);
+
+        log.info("유저 프로필 삭제 완료");
+        return BaseResponseDto.of(SuccessMessage.SUCCESS, null);
+
+    }
+
     public BaseResponseDto specificUser(Long userId) {
 
 
