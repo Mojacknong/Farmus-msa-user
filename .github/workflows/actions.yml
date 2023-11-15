@@ -2,7 +2,7 @@ name: ModernFarmer CI/CD
 
 on:
   push:
-    branches: ["feature_21/-유저-오픈-페인-API"]
+    branches: ["feature_25/유저-정보-조회"]
 
   pull_request:
     branches: ["dev"]

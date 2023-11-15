@@ -35,6 +35,16 @@ public class UserController {
 //
 //    }
 
+    @GetMapping
+    public BaseResponseDto getUser(HttpServletRequest request){
+
+        String userId = jwtTokenProvider.getUserId(request);
+
+        return userService.getUser(Long.valueOf(userId));
+    }
+
+
+
 
     @PostMapping(value = "/nickname")
     public BaseResponseDto emitNickname(HttpServletRequest request, @RequestBody ProduceNicknameRequest produceNicknameRequest){
@@ -47,10 +57,10 @@ public class UserController {
     }
 
     @PostMapping(value = "/select-information", produces = MediaType.APPLICATION_JSON_VALUE)
-    public BaseResponseDto selectProfileImageAndNickname(HttpServletRequest request, @RequestParam(value = "file", required = false) MultipartFile multipartFile, @RequestParam("nickName")String nickName) throws IOException {
+    public BaseResponseDto selectProfileImageAndNickname(HttpServletRequest request, @RequestPart(value = "file", required = false) MultipartFile multipartFile, @RequestParam("nickName")String nickName) throws IOException {
 
         String userId = jwtTokenProvider.getUserId(request);
-        log.info(userId);
+
         BaseResponseDto responseDto = userService.selectProfileImageAndNickname(Long.valueOf(userId), multipartFile,nickName);
 
         return responseDto;
@@ -91,11 +101,6 @@ public class UserController {
         return responseDto;
     }
 
-
-
-
-
-
     @DeleteMapping("/logout")
     public BaseResponseDto logout(HttpServletRequest request)  {
 
@@ -122,6 +127,15 @@ public class UserController {
         return reissueTokenResponseDto;
     }
 
+    @PatchMapping(value = "/delete/user-profile")
+    public BaseResponseDto deleteUserProfile(HttpServletRequest request)  {
+
+        String userId = jwtTokenProvider.getUserId(request);
+
+        return userService.deleteUserProfile(Long.valueOf(userId));
+    }
+
+
     @GetMapping(value = "/all-user")
     public BaseResponseDto allUser()  {
 
@@ -134,7 +148,5 @@ public class UserController {
        // String userId = jwtTokenProvider.getUserId(request);
         return userService.specificUser(userId);
     }
-
-
 
 }
