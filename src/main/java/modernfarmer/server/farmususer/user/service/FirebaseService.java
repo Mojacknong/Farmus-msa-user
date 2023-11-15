@@ -29,10 +29,23 @@ public class FirebaseService {
                 .token(firebaseToken)
                 .build();
 
-
         userFirebaseTokenRepository.save(userFirebaseToken);
+        log.info("파이어 베이스 토큰 삽입 완료");
+        return BaseResponseDto.of(SuccessMessage.SUCCESS, null);
+    }
+
+    public BaseResponseDto deleteFirebaseToken(Long userId, String firebaseToken) {
+
+
+        userFirebaseTokenRepository.deleteFirebaseToken(
+                User.builder()
+                        .id(userId)
+                        .build(),
+                firebaseToken
+                );
+
+        log.info("파이어 베이스 토큰 삭제 완료");
 
         return BaseResponseDto.of(SuccessMessage.SUCCESS, null);
-
     }
 }
