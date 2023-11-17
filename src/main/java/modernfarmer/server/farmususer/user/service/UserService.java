@@ -44,7 +44,7 @@ public class UserService {
 //        return BaseResponseDto.of(SuccessMessage.SUCCESS,null);
 //    }
 
-    public BaseResponseDto getUser(Long userId){
+    public BaseResponseDto<GetUserResponseDto> getUser(Long userId){
 
         Optional<User> user = userRepository.findById(userId);
 
@@ -54,19 +54,23 @@ public class UserService {
 
         long dDay = timeCalculator.calFromToday(user.get().getCreatedAt());
 
+        log.info("특정 유저 정보 가져오기 완료");
+
         return BaseResponseDto.of(SuccessMessage.SUCCESS, GetUserResponseDto.of(user.get().getNickname(),user.get().getProfileImage(),dDay));
     }
 
 
 
-    public BaseResponseDto emitNickname(Long userId, String nickName){
+    public BaseResponseDto<Void> emitNickname(Long userId, String nickName){
 
         userRepository.updateUserNickname(nickName, userId);
+
+        log.info("닉네임 수정 완료");
 
         return BaseResponseDto.of(SuccessMessage.SUCCESS,null);
     }
 
-    public BaseResponseDto selectProfileImageAndNickname(Long userId, MultipartFile multipartFile,
+    public BaseResponseDto<Void> selectProfileImageAndNickname(Long userId, MultipartFile multipartFile,
                                                          String nickName) throws IOException {
 
         if(multipartFile.isEmpty()){
@@ -79,48 +83,58 @@ public class UserService {
             userRepository.selectUserProfileAndNickname(userId,imageUrl,nickName);
 
         }
+
+        log.info("유저 프로필 정보 수정 완료");
         return BaseResponseDto.of(SuccessMessage.SUCCESS,null);
 
     }
 
 
 
-    public BaseResponseDto selectProfileImage(Long userId){
+    public BaseResponseDto<ProfileImageResponseDto> selectProfileImage(Long userId){
 
         String userProfileImage = userRepository.selectUserProfileImage(userId);
+
+        log.info("유저 프로필 이미지 조회 완료");
 
         return BaseResponseDto.of(SuccessMessage.SUCCESS, ProfileImageResponseDto.of(userProfileImage));
     }
 
-    public BaseResponseDto signUpComlete(Long userId){
+    public BaseResponseDto<Void> signUpComlete(Long userId){
 
        userRepository.updateEarly(userId);
+
+        log.info("유저 최종 회원가입 완료");
 
        return BaseResponseDto.of(SuccessMessage.SUCCESS, null);
     }
 
 
-    public BaseResponseDto deleteUser(Long userId){
+    public BaseResponseDto<Void> deleteUser(Long userId){
 
         userRepository.deleteUser(userId);
+
+        log.info("유저 계정 삭제 완료");
 
         return BaseResponseDto.of(SuccessMessage.SUCCESS,null);
     }
 
 
 
-     public BaseResponseDto allUser() {
+     public BaseResponseDto<AllUserResponseDto> allUser() {
 
         List<User> userList = userRepository.findAllBy();
          List<AllUserDto> userResponseList = userList.stream()
                  .map(user -> AllUserDto.of(user.getId(), user.getNickname(), user.getProfileImage()))
                  .collect(Collectors.toList());
 
+         log.info("모든 유저 데이터 조회 완료");
+
         return BaseResponseDto.of(SuccessMessage.SUCCESS, AllUserResponseDto.of(userResponseList));
 
      }
 
-    public BaseResponseDto deleteUserProfile(Long userId) {
+    public BaseResponseDto<Void> deleteUserProfile(Long userId) {
 
         userRepository.updateUserProfileDefault(userId);
 
@@ -129,7 +143,7 @@ public class UserService {
 
     }
 
-    public BaseResponseDto specificUser(Long userId) {
+    public BaseResponseDto<SpecificUserResponseDto> specificUser(Long userId) {
 
 
         Optional<User> user = userRepository.findById(userId);
@@ -137,6 +151,8 @@ public class UserService {
         if(user.isEmpty()){
             return BaseResponseDto.of(ErrorMessage.NO_USER_DATA);
         }
+
+        log.info("특정 유저 정보 조회 완료");
 
         return BaseResponseDto.of(SuccessMessage.SUCCESS,
                 SpecificUserResponseDto.of(user.get().getId(),
@@ -146,20 +162,24 @@ public class UserService {
     }
 
 
-    public BaseResponseDto logout(Long userId) {
+    public BaseResponseDto<Void> logout(Long userId) {
 
         deleteValueByKey(String.valueOf(userId));
+
+        log.info("로그아웃 완료");
 
         return BaseResponseDto.of(SuccessMessage.SUCCESS,null);
     }
 
-    public BaseResponseDto reissueToken(String refreshToken, Long userId) {
+    public BaseResponseDto<RefreshTokenResponseDto> reissueToken(String refreshToken, Long userId) {
 
         String redisRefreshToken = redisTemplate.opsForValue().get(userId.toString());
 
         if(refreshToken.equals(redisRefreshToken)){
 
             String userRole = userRepository.findUserRole(userId);
+
+            log.info("토큰 재발급 완료");
 
             return BaseResponseDto.of(SuccessMessage.SUCCESS,
                     RefreshTokenResponseDto.of(

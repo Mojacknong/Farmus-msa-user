@@ -2,6 +2,7 @@ package modernfarmer.server.farmususer.user.repository;
 
 import io.lettuce.core.dynamic.annotation.Param;
 import modernfarmer.server.farmususer.user.entity.User;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -55,7 +56,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findAllBy();
 
-    Optional<User> findById(Long userId);
+    @NotNull
+    Optional<User> findById(@NotNull Long userId);
 
 
 

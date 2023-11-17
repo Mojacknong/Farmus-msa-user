@@ -23,7 +23,7 @@ public class FirebaseController {
 
 
     @PostMapping(value = "/firebase-token")
-    public BaseResponseDto insertFirebaseToken(HttpServletRequest request)  {
+    public BaseResponseDto<Void> insertFirebaseToken(HttpServletRequest request)  {
 
         String userId = jwtTokenProvider.getUserId(request);
         String fireBaseToken = jwtTokenProvider.getFirebaseToken(request);
@@ -33,7 +33,7 @@ public class FirebaseController {
 
 
     @DeleteMapping(value = "/firebase-token")
-    public BaseResponseDto deleteFirebaseToken(HttpServletRequest request)  {
+    public BaseResponseDto<Void> deleteFirebaseToken(HttpServletRequest request)  {
 
         String userId = jwtTokenProvider.getUserId(request);
         String fireBaseToken = jwtTokenProvider.getFirebaseToken(request);

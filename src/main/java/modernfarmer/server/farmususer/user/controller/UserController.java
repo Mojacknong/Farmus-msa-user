@@ -3,7 +3,7 @@ package modernfarmer.server.farmususer.user.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import modernfarmer.server.farmususer.user.dto.request.ProduceNicknameRequest;
-import modernfarmer.server.farmususer.user.dto.response.BaseResponseDto;
+import modernfarmer.server.farmususer.user.dto.response.*;
 
 import modernfarmer.server.farmususer.user.service.UserService;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
@@ -36,7 +36,7 @@ public class UserController {
 //    }
 
     @GetMapping
-    public BaseResponseDto getUser(HttpServletRequest request){
+    public BaseResponseDto<GetUserResponseDto> getUser(HttpServletRequest request){
 
         String userId = jwtTokenProvider.getUserId(request);
 
@@ -45,90 +45,68 @@ public class UserController {
 
 
 
-
     @PostMapping(value = "/nickname")
-    public BaseResponseDto emitNickname(HttpServletRequest request, @RequestBody ProduceNicknameRequest produceNicknameRequest){
+    public BaseResponseDto<Void> emitNickname(HttpServletRequest request, @RequestBody ProduceNicknameRequest produceNicknameRequest){
 
         String userId = jwtTokenProvider.getUserId(request);
 
-        BaseResponseDto responseDto = userService.emitNickname(Long.valueOf(userId), produceNicknameRequest.getNickName());
-
-        return responseDto;
+        return userService.emitNickname(Long.valueOf(userId), produceNicknameRequest.getNickName());
     }
 
     @PostMapping(value = "/select-information", produces = MediaType.APPLICATION_JSON_VALUE)
-    public BaseResponseDto selectProfileImageAndNickname(HttpServletRequest request, @RequestPart(value = "file", required = false) MultipartFile multipartFile, @RequestParam("nickName")String nickName) throws IOException {
+    public BaseResponseDto<Void> selectProfileImageAndNickname(HttpServletRequest request, @RequestPart(value = "file", required = false) MultipartFile multipartFile, @RequestParam("nickName")String nickName) throws IOException {
 
         String userId = jwtTokenProvider.getUserId(request);
 
-        BaseResponseDto responseDto = userService.selectProfileImageAndNickname(Long.valueOf(userId), multipartFile,nickName);
-
-        return responseDto;
+        return  userService.selectProfileImageAndNickname(Long.valueOf(userId), multipartFile,nickName);
 
     }
 
     @PatchMapping(value = "/sign-up/complete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public BaseResponseDto signUpComplete(HttpServletRequest request)  {
+    public BaseResponseDto<Void> signUpComplete(HttpServletRequest request)  {
 
         String userId = jwtTokenProvider.getUserId(request);
 
-
-        BaseResponseDto responseDto = userService.signUpComlete(Long.valueOf(userId));
-
-        return responseDto;
+        return userService.signUpComlete(Long.valueOf(userId));
 
     }
 
     @GetMapping(value = "/profileImage")
-    public BaseResponseDto selectProfileImage(HttpServletRequest request){
+    public BaseResponseDto<ProfileImageResponseDto> selectProfileImage(HttpServletRequest request){
 
         String userId = jwtTokenProvider.getUserId(request);
 
-
-        BaseResponseDto profileImageResponseDto = userService.selectProfileImage(Long.valueOf(userId));
-
-        return profileImageResponseDto;
+        return userService.selectProfileImage(Long.valueOf(userId));
     }
 
 
     @DeleteMapping(value = "/delete")
-    public BaseResponseDto deleteUser(HttpServletRequest request){
+    public BaseResponseDto<Void> deleteUser(HttpServletRequest request){
 
         String userId = jwtTokenProvider.getUserId(request);
 
-        BaseResponseDto responseDto = userService.deleteUser(Long.valueOf(userId));
-
-        return responseDto;
+        return userService.deleteUser(Long.valueOf(userId));
     }
 
     @DeleteMapping("/logout")
-    public BaseResponseDto logout(HttpServletRequest request)  {
-
+    public BaseResponseDto<Void> logout(HttpServletRequest request)  {
 
         String userId = jwtTokenProvider.getUserId(request);
 
-        BaseResponseDto logoutResponseDto = userService.logout(Long.valueOf(userId));
-
-        log.info("로그아웃 완료");
-
-        return logoutResponseDto;
+        return userService.logout(Long.valueOf(userId));
     }
 
     @GetMapping(value = "/reissue-token")
-    public BaseResponseDto reissueToken(HttpServletRequest request)  {
+    public BaseResponseDto<RefreshTokenResponseDto> reissueToken(HttpServletRequest request)  {
 
         String userId = jwtTokenProvider.getUserId(request);
         String refreshToken = jwtTokenProvider.resolveToken(request);
 
-        BaseResponseDto reissueTokenResponseDto = userService.reissueToken(refreshToken, Long.valueOf(userId));
-
-        log.info("토큰 재발급 완료");
-
-        return reissueTokenResponseDto;
+        return userService.reissueToken(refreshToken, Long.valueOf(userId));
     }
 
     @PatchMapping(value = "/delete/user-profile")
-    public BaseResponseDto deleteUserProfile(HttpServletRequest request)  {
+    public BaseResponseDto<Void> deleteUserProfile(HttpServletRequest request)  {
 
         String userId = jwtTokenProvider.getUserId(request);
 
@@ -137,14 +115,13 @@ public class UserController {
 
 
     @GetMapping(value = "/all-user")
-    public BaseResponseDto allUser()  {
+    public BaseResponseDto<AllUserResponseDto> allUser()  {
 
         return userService.allUser();
     }
 
     @GetMapping(value = "/specific-user")
-    public BaseResponseDto specificUser(@RequestParam("userId") Long userId)  {
-
+    public BaseResponseDto<SpecificUserResponseDto> specificUser(@RequestParam("userId") Long userId)  {
 
         return userService.specificUser(userId);
     }
