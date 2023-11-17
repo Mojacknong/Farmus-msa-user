@@ -83,12 +83,12 @@ public class JwtTokenProvider {
         }
     }
 
-    public String getUserRole(HttpServletRequest request) {
-        LOGGER.info("[resolveToken] HTTP 헤더에서 Token 값 추출");
+    public String getFirebaseToken(HttpServletRequest request) {
+        LOGGER.info("[firebaseToken] HTTP 헤더에서 Token 값 추출");
 
-        String tokenRole = request.getHeader("role");
+        String firebaseToken = request.getHeader("FirebaseToken");
 
-        return tokenRole;
+        return firebaseToken;
 
     }
 

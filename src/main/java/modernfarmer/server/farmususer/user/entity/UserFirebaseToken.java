@@ -20,7 +20,7 @@ public class UserFirebaseToken extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "firebase_token_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Size(max = 100)
     @NotNull
