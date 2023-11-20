@@ -195,8 +195,13 @@ public class UserService {
     public String getUserLevel(Long userId) {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. id=" + userId));
-
         return user.getLevel();
+    }
+
+    public GetUserLevelAndNicknameResponseDto getUserLevelAndNickname(Long userId) {
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. id=" + userId));
+        return GetUserLevelAndNicknameResponseDto.of(user.getLevel(), user.getNickname());
     }
 
 
