@@ -49,6 +49,11 @@ public class UserController {
         return userService.getUserLevel(userId);
     }
 
+    @GetMapping("/info")
+    public GetUserLevelAndNicknameResponseDto getUserLevelAndNickname(@RequestHeader("user") Long userId){
+        return userService.getUserLevelAndNickname(userId);
+    }
+
     @PostMapping(value = "/nickname")
     public BaseResponseDto<Void> emitNickname(HttpServletRequest request, @RequestBody ProduceNicknameRequest produceNicknameRequest){
 
