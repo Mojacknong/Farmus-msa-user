@@ -117,10 +117,10 @@ public class UserService {
     public BaseResponseDto<Void> deleteUser(Long userId){
 
         userRepository.deleteUser(userId);
-
+        communityServiceFeignClient.deleteAllPosting(userId);
         farmServiceFeignClient.deleteAllFarm(userId);
 
-        communityServiceFeignClient.deleteAllPosting(userId);
+
 
 
 
