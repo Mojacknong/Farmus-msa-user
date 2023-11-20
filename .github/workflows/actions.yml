@@ -2,7 +2,7 @@ name: ModernFarmer CI/CD
 
 on:
   push:
-    branches: ["feature_29/코드-정리"]
+    branches: ["feature_32/계정-삭제-api"]
 
   pull_request:
     branches: ["dev"]
