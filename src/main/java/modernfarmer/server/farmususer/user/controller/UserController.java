@@ -2,6 +2,7 @@ package modernfarmer.server.farmususer.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import modernfarmer.server.farmususer.global.exception.success.SuccessMessage;
 import modernfarmer.server.farmususer.user.dto.request.ProduceNicknameRequest;
 import modernfarmer.server.farmususer.user.dto.response.*;
 
@@ -43,7 +44,10 @@ public class UserController {
         return userService.getUser(Long.valueOf(userId));
     }
 
-
+    @GetMapping("/level")
+    public String getUserLevel(@RequestHeader("user") Long userId){
+        return userService.getUserLevel(userId);
+    }
 
     @PostMapping(value = "/nickname")
     public BaseResponseDto<Void> emitNickname(HttpServletRequest request, @RequestBody ProduceNicknameRequest produceNicknameRequest){
