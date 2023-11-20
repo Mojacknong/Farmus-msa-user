@@ -27,8 +27,7 @@ public class UserMotivation extends BaseEntity{
     private User user;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "motivation_id", nullable = false)
     private Motivation motivation;
 
