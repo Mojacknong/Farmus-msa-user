@@ -3,7 +3,6 @@ package modernfarmer.server.farmususer.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import modernfarmer.server.farmususer.global.config.s3.S3Uploader;
 import modernfarmer.server.farmususer.global.exception.success.SuccessMessage;
 import modernfarmer.server.farmususer.user.dto.response.BaseResponseDto;
 import modernfarmer.server.farmususer.user.entity.User;
@@ -21,7 +20,7 @@ public class FirebaseService {
     private final UserFirebaseTokenRepository userFirebaseTokenRepository;
 
 
-    public BaseResponseDto insertFirebaseToken(Long userId, String firebaseToken) {
+    public BaseResponseDto<Void> insertFirebaseToken(Long userId, String firebaseToken) {
 
 
         UserFirebaseToken userFirebaseToken = UserFirebaseToken.builder()
@@ -34,7 +33,7 @@ public class FirebaseService {
         return BaseResponseDto.of(SuccessMessage.SUCCESS, null);
     }
 
-    public BaseResponseDto deleteFirebaseToken(Long userId, String firebaseToken) {
+    public BaseResponseDto<Void> deleteFirebaseToken(Long userId, String firebaseToken) {
 
 
         userFirebaseTokenRepository.deleteFirebaseToken(

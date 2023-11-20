@@ -2,7 +2,7 @@ name: ModernFarmer CI/CD
 
 on:
   push:
-    branches: ["feature_27/파이어베이스-관리"]
+    branches: ["feature_29/코드-정리"]
 
   pull_request:
     branches: ["dev"]

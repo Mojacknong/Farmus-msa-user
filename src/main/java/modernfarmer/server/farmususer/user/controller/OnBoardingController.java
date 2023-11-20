@@ -6,9 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import modernfarmer.server.farmususer.user.dto.request.OnBoardingLevelRequest;
 import modernfarmer.server.farmususer.user.dto.request.OnBoardingMotivationRequest;
 import modernfarmer.server.farmususer.user.dto.response.BaseResponseDto;
+import modernfarmer.server.farmususer.user.dto.response.OnBoardingLevelResponse;
 import modernfarmer.server.farmususer.user.service.OnBoardingService;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,22 +27,18 @@ public class OnBoardingController {
 
 
     @PostMapping(value = "/motivation")
-    public BaseResponseDto onBoardingMotivation(HttpServletRequest request, @Validated @RequestBody OnBoardingMotivationRequest onBoardingMotivationRequest)  {
+    public BaseResponseDto<Void> onBoardingMotivation(HttpServletRequest request, @Validated @RequestBody OnBoardingMotivationRequest onBoardingMotivationRequest)  {
 
         String userId = jwtTokenProvider.getUserId(request);
 
-        BaseResponseDto responseDto = onBoardingService.onBoardingMotivation(Long.valueOf(userId),onBoardingMotivationRequest);
-
-        return responseDto;
+        return onBoardingService.onBoardingMotivation(Long.valueOf(userId),onBoardingMotivationRequest);
     }
 
     @PostMapping(value = "/level")
-    public BaseResponseDto onBoardingLevel(HttpServletRequest request, @Validated @RequestBody OnBoardingLevelRequest onBoardingLevelRequest)  {
+    public BaseResponseDto<OnBoardingLevelResponse> onBoardingLevel(HttpServletRequest request, @Validated @RequestBody OnBoardingLevelRequest onBoardingLevelRequest)  {
 
         String userId = jwtTokenProvider.getUserId(request);
 
-        BaseResponseDto responseDto = onBoardingService.onBoardingLevel(Long.valueOf(userId), onBoardingLevelRequest);
-
-        return responseDto;
+        return onBoardingService.onBoardingLevel(Long.valueOf(userId), onBoardingLevelRequest);
     }
 }

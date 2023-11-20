@@ -15,6 +15,7 @@ import modernfarmer.server.farmususer.user.entity.UserMotivation;
 import modernfarmer.server.farmususer.user.repository.MotivationRepository;
 import modernfarmer.server.farmususer.user.repository.UserMotivationRepository;
 import modernfarmer.server.farmususer.user.repository.UserRepository;
+import modernfarmer.server.farmususer.user.util.LevelCheck;
 import org.springframework.stereotype.Service;
 
 
@@ -34,7 +35,9 @@ public class OnBoardingService {
 
     private final MotivationRepository motivationRepository;
 
-    public BaseResponseDto onBoardingMotivation(Long userId, OnBoardingMotivationRequest onBoardingMotivationRequest){
+    private final LevelCheck levelCheck;
+
+    public BaseResponseDto<Void> onBoardingMotivation(Long userId, OnBoardingMotivationRequest onBoardingMotivationRequest){
 
         User user = User.builder().id(userId).build();
 
@@ -55,65 +58,21 @@ public class OnBoardingService {
             userMotivationRepository.save(userMotivation);
         }
 
+        log.info("동기 데이터 삽입 완료");
+
         return BaseResponseDto.of(SuccessMessage.SUCCESS,null);
 
     }
 
-    public BaseResponseDto onBoardingLevel(Long userId, OnBoardingLevelRequest onBoardingLevelRequest){
+    public BaseResponseDto<OnBoardingLevelResponse> onBoardingLevel(Long userId, OnBoardingLevelRequest onBoardingLevelRequest){
 
-        String level = recommendAlgorithms(onBoardingLevelRequest.getTime(), onBoardingLevelRequest.getSkill());
+        String level = levelCheck.recommendAlgorithms(onBoardingLevelRequest.getTime(), onBoardingLevelRequest.getSkill());
 
         userRepository.insertUserLevel(userId, level);
+
+        log.info("난이도 데이터 삽입 완료");
 
         return BaseResponseDto.of(SuccessMessage.SUCCESS, OnBoardingLevelResponse.of(level));
 
     }
-
-    private String recommendAlgorithms(int time,String skill) {
-        boolean isIntermediate = false;
-        boolean isMaster = false;
-        boolean isElementary = false;
-        boolean isBeginner = false;
-
-
-        if ("홈파밍 중급".equals(skill)) {
-            isIntermediate = true;
-        } else if ("홈파밍 고수".equals(skill)) {
-            isMaster = true;
-        } else if ("홈파밍 초보".equals(skill)) {
-            isElementary = true;
-        } else if ("홈파밍 입문".equals(skill)) {
-            isBeginner = true;
-        }
-
-
-        if (time == 2 && (isIntermediate || isMaster)) {
-            return "HARD";
-        } else if (time == 2 && (isBeginner || isElementary)) {
-            return "NORMAL";
-        } else if (time == 1 && isMaster) {
-            return "HARD";
-        } else if (time == 1 && (isIntermediate || isElementary)) {
-            return "NORMAL";
-        } else if (time == 1 && isBeginner) {
-            return "EASY";
-        } else if (time == 0 && isMaster) {
-            return "HARD";
-        } else if (time == 0 && isIntermediate) {
-            return "NORMAL";
-        } else if (time == 0 && (isElementary || isBeginner)) {
-            return "EASY";
-        }
-
-        return "알 수 없음";
-    }
-
-
-
-
-
-
-
-
-
 }
