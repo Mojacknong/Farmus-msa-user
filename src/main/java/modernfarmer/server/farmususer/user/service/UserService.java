@@ -118,12 +118,7 @@ public class UserService {
 
         userRepository.deleteUser(userId);
         communityServiceFeignClient.deleteAllPosting(userId);
-    //    farmServiceFeignClient.deleteAllVeggies(userId);
-
-
-
-
-
+        farmServiceFeignClient.deleteAllVeggies(userId);
 
         log.info("유저 계정 삭제 완료");
 
