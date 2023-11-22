@@ -2,6 +2,8 @@ package modernfarmer.server.farmususer.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import modernfarmer.server.farmususer.community.CommunityServiceFeignClient;
+import modernfarmer.server.farmususer.farm.FarmServiceFeignClient;
 import modernfarmer.server.farmususer.global.config.s3.S3Uploader;
 import modernfarmer.server.farmususer.global.exception.fail.ErrorMessage;
 import modernfarmer.server.farmususer.global.exception.success.SuccessMessage;
@@ -32,6 +34,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final S3Uploader s3Uploader;
     private final TimeCalculator timeCalculator;
+    private final CommunityServiceFeignClient communityServiceFeignClient;
+    private final FarmServiceFeignClient farmServiceFeignClient;
 
 
 //    public BaseResponseDto emitProfileImage(Long userId, MultipartFile multipartFile) throws IOException {
@@ -113,6 +117,8 @@ public class UserService {
     public BaseResponseDto<Void> deleteUser(Long userId){
 
         userRepository.deleteUser(userId);
+        communityServiceFeignClient.deleteAllPosting(userId);
+        farmServiceFeignClient.deleteAllVeggies(userId);
 
         log.info("유저 계정 삭제 완료");
 
