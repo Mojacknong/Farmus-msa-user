@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(staticName = "of")
 @NoArgsConstructor
 @Getter
-public class GetUserLevelAndNicknameResponseDto {
+public class UserMotivationResponseDto {
 
-    private String level;
-    private String nickname;
     private String motivation;
 }

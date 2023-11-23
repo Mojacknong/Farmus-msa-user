@@ -135,4 +135,10 @@ public class UserController {
         return userService.specificUser(userId);
     }
 
+    @GetMapping("/motivation")
+    public BaseResponseDto<UserMotivationResponseDto> getMotivation(
+            @RequestHeader("user") Long userId
+    ){
+        return BaseResponseDto.of(SuccessMessage.SUCCESS, userService.getUserMotivation(userId));
+    }
 }

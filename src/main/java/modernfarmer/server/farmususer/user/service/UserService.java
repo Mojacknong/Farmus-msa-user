@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import modernfarmer.server.farmususer.community.CommunityServiceFeignClient;
 import modernfarmer.server.farmususer.farm.FarmServiceFeignClient;
 import modernfarmer.server.farmususer.global.config.s3.S3Uploader;
+import modernfarmer.server.farmususer.global.enums.Motivations;
 import modernfarmer.server.farmususer.global.exception.fail.ErrorMessage;
 import modernfarmer.server.farmususer.global.exception.success.SuccessMessage;
 import modernfarmer.server.farmususer.user.dto.response.*;
 import modernfarmer.server.farmususer.user.entity.User;
+import modernfarmer.server.farmususer.user.entity.UserMotivation;
 import modernfarmer.server.farmususer.user.repository.UserRepository;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
 import modernfarmer.server.farmususer.user.util.TimeCalculator;
@@ -18,8 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -207,10 +208,40 @@ public class UserService {
     public GetUserLevelAndNicknameResponseDto getUserLevelAndNickname(Long userId) {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. id=" + userId));
-        return GetUserLevelAndNicknameResponseDto.of(user.getLevel(), user.getNickname());
+        return GetUserLevelAndNicknameResponseDto.of(user.getLevel(), user.getNickname(), getUserMotivation(userId).getMotivation());
     }
 
+    public UserMotivationResponseDto getUserMotivation(Long userId) {
 
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. id=" + userId));
+
+        Set<UserMotivation> motivations = user.getUserMotivations();
+
+        log.info(motivations.toString());
+
+        List<Long> result = motivations.stream()
+                .map(um -> { return um.getMotivation().getId(); } )
+                .collect(Collectors.toList());
+
+        List<String> motivationResult = new ArrayList<>();
+
+        log.info(result.toString());
+
+        for (Long l : result) {
+            if (l == 1) {
+                Arrays.stream(Motivations.Motive_1.values()).forEach(m -> motivationResult.add(m.getMotive()));
+            } else if (l == 2) {
+                Arrays.stream(Motivations.Motive_2.values()).forEach(m -> motivationResult.add(m.getMotive()));
+            } else {
+                Arrays.stream(Motivations.Motive_3.values()).forEach(m -> motivationResult.add(m.getMotive()));
+            }
+        }
+
+        log.info(motivationResult.toString());
+
+        // motivationResult에서 랜덤으로 하나를 뽑아서 리턴
+        return UserMotivationResponseDto.of(motivationResult.get((int) (Math.random() * motivationResult.size())));
+    }
 
 
 
