@@ -21,7 +21,7 @@ public class Motivations {
     }
     public enum Motive_2 {
         MOTIVE2_1("직접 기른 채소를\n먹을 수 있는 그날까지!"),
-        MOTIVE2_2("신선함으로 가득 채워지는 식탁, \n 늘 함께할게요!"),
+        MOTIVE2_2("신선함으로 가득 채워지는 식탁, \n늘 함께할게요!"),
         MOTIVE2_3("눈으로 보는 재미, 입으로 맛보는\n홈파밍의 즐거움!");
 
         private final String motive2;
@@ -37,9 +37,9 @@ public class Motivations {
     public enum Motive_3 {
         MOTIVE3_1("바쁜 일상에서 잠깐 벗어나\n텃밭을 가꿔봐요"),
         MOTIVE3_2("홈파밍을 하며\n마음의 안정을 느껴봐요!"),
-        MOTIVE3_3("스트레스 받는 하루, \n 홈파밍으로 힐링하세요"),
+        MOTIVE3_3("스트레스 받는 하루, \n홈파밍으로 힐링하세요"),
         MOTIVE3_4("나만의 채소를 키우며\n소소한 성취감을 느껴보세요"),
-        MOTIVE3_5("성취감은 꾸준함에서! \n 오늘도 함께 성장해요");
+        MOTIVE3_5("성취감은 꾸준함에서! \n오늘도 함께 성장해요");
 
         private final String motive3;
 

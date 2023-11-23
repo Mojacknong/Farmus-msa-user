@@ -215,17 +215,14 @@ public class UserService {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. id=" + userId));
 
-        Set<UserMotivation> motivations = user.getUserMotivations();
-
-        log.info(motivations.toString());
-
-        List<Long> result = motivations.stream()
-                .map(um -> { return um.getMotivation().getId(); } )
-                .collect(Collectors.toList());
-
-        List<String> motivationResult = new ArrayList<>();
+        List<Long> result = new ArrayList<>();
+        result.add(1L);
+        result.add(2L);
+        result.add(3L);
 
         log.info(result.toString());
+
+        List<String> motivationResult = new ArrayList<>();
 
         for (Long l : result) {
             if (l == 1) {
