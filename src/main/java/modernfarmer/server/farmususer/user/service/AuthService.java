@@ -1,168 +1,148 @@
 package modernfarmer.server.farmususer.user.service;
 
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import modernfarmer.server.farmususer.global.exception.fail.ErrorMessage;
+import modernfarmer.server.farmususer.global.exception.success.SuccessMessage;
+import modernfarmer.server.farmususer.user.dto.response.BaseResponseDto;
+import modernfarmer.server.farmususer.user.dto.response.GoogleUserResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.KakaoUserResponseDto;
-import modernfarmer.server.farmususer.user.dto.response.ResponseDto;
 import modernfarmer.server.farmususer.user.dto.response.TokenResponseDto;
 import modernfarmer.server.farmususer.user.entity.User;
 import modernfarmer.server.farmususer.user.repository.UserRepository;
 import modernfarmer.server.farmususer.user.util.JwtTokenProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import modernfarmer.server.farmususer.user.util.SocialLogin;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
 
+
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class AuthService{
 
 
-    public JwtTokenProvider jwtTokenProvider;
-    public RedisTemplate<String, String> redisTemplate;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public UserRepository userRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
-    private final WebClient webClient;
+    private final UserRepository userRepository;
 
-    @Autowired
-    public AuthService(WebClient webClient, UserRepository userRepository, JwtTokenProvider jwtTokenProvider, RedisTemplate<String, String> redisTemplate) {
-        this.webClient = webClient;
-        this.userRepository = userRepository;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.redisTemplate = redisTemplate;
-    }
+    private final SocialLogin socialLogin;
 
 
-
-    public TokenResponseDto kakaoLogin(String accessToken) {
+    public BaseResponseDto<TokenResponseDto> googleLogin(String accessToken) {
 
         User user;
+        boolean early;
 
-        Mono<KakaoUserResponseDto> userInfoMono = getUserInfo(accessToken);
-        KakaoUserResponseDto userInfo = userInfoMono.block();
+        Mono<GoogleUserResponseDto> userInfoMono = socialLogin.getUserInfo(accessToken, "https://www.googleapis.com/oauth2/v2/userinfo", GoogleUserResponseDto.class);
+        GoogleUserResponseDto userInfo = userInfoMono.block();
 
-//        LOGGER.info(String.valueOf(userInfo.getAccount_email()));
-//        LOGGER.info(String.valueOf(userInfo.getProfile_nickname()));
-//        LOGGER.info(String.valueOf(userInfo.getProfile_image()));
+        if(userInfo == null){
 
-//        LOGGER.info(String.valueOf(userInfo.getKakao_account().getEmail()));
-//        LOGGER.info(String.valueOf(userInfo.getKakao_account().getProfile().getProfileImageUrl()));
-//        LOGGER.info(String.valueOf(userInfo.getKakao_account().getProfile().getNickname()));
+            return BaseResponseDto.of(ErrorMessage.FAIL_GET_INFORMATION);
 
-        Optional<User> userData = userRepository.findByUsernumber(String.valueOf(userInfo.getId()));
+        }
+
+        Optional<User> userData = userRepository.findByUserNumber(String.valueOf(userInfo.getId()));
 
         if(userData.isEmpty()){
             user = User.builder()
-                    .usernumber(String.valueOf(userInfo.getId()))
-                    .role("USER")
-//                    .email(userInfo.getKakao_account().getEmail())
-//                    .nickname(userInfo.getKakao_account().getProfile().getNickname())
-//                    .userProfile(userInfo.getKakao_account().getProfile().getProfileImageUrl())
+                    .userNumber(String.valueOf(userInfo.getId()))
+                    .roles("USER")
+                    .early(true)
                     .build();
 
             userRepository.save(user);
         }
 
-        Optional<User> userLoginData = userRepository.findByUsernumber(String.valueOf(userInfo.getId()));
+        Optional<User> userLoginData = userRepository.findByUserNumber(String.valueOf(userInfo.getId()));
 
+        if(userLoginData.isEmpty()){
 
-        String refreshToken = "Bearer " +jwtTokenProvider.createRereshToken(userLoginData.get().getId());
+            return BaseResponseDto.of(ErrorMessage.FAIL_GET_INFORMATION);
 
-        TokenResponseDto tokenResponseDto = TokenResponseDto.builder()
-                .message("OK")
-                .code(200)
-                .accessToken("Bearer " +jwtTokenProvider.createAccessToken(
-                        userLoginData.get().getId(),
-                        String.valueOf(userLoginData.get().getRole())))
-                .refreshToken(refreshToken)
-                .build();
+        }
 
-//        redisTemplate.opsForHash().put(jwtTokenProvider.createRereshToken(),"userId", String.valueOf(userLoginData.get().getId()));
-//        redisTemplate.opsForHash().put(jwtTokenProvider.createRereshToken(),"role", String.valueOf(userLoginData.get().getRole()));
+        String refreshToken = jwtTokenProvider.createRefreshToken(userLoginData.get().getId());
+
+        early = userLoginData.get().isEarly();
 
         redisTemplate.opsForValue().set(String.valueOf(userLoginData.get().getId()),refreshToken);
 
+        log.info("구글 로그인 완료");
 
-        return tokenResponseDto;
+        return BaseResponseDto.of(
+                SuccessMessage.SUCCESS,
+                TokenResponseDto.of(
+                        jwtTokenProvider.createAccessToken(
+                                userLoginData.get().getId(),
+                                String.valueOf(userLoginData.get().getRoles())),
+                        refreshToken,
+                        early
+                )
+        );
     }
 
+    public BaseResponseDto<TokenResponseDto> kakaoLogin(String accessToken) {
 
-    public ResponseDto logout(Long userId) {
-        deleteValueByKey(String.valueOf(userId));
+        User user;
+        boolean early;
+        Mono<KakaoUserResponseDto> userInfoMono = socialLogin.getUserInfo(accessToken, "https://kapi.kakao.com/v2/user/me", KakaoUserResponseDto.class);
+        KakaoUserResponseDto userInfo = userInfoMono.block();
 
-        ResponseDto responseDto = ResponseDto.builder()
-                .message("OK")
-                .code(200)
-                .build();
-        return responseDto;
-    }
+        if(userInfo == null){
 
-    public TokenResponseDto reissueToken(String refreshToken, Long userId) {
-        TokenResponseDto reissueTokenResponse;
-
-        if(!jwtTokenProvider.validateRefreshToken(refreshToken)){
-
-            reissueTokenResponse = TokenResponseDto.builder()
-                    .code(417)
-                    .message("재로그인하시오")
-                    .build();
-
-            return reissueTokenResponse;
-        }
-
-        String redisRefreshToken = redisTemplate.opsForValue().get(userId);
-
-        if(redisRefreshToken.equals(refreshToken)){
-
-            String userRole = String.valueOf(userRepository.findUserRole(userId));
-
-            reissueTokenResponse= TokenResponseDto
-                    .builder()
-                    .code(200)
-                    .message("OK")
-                    .accessToken(jwtTokenProvider.createAccessToken(Long.valueOf(userId),userRole))
-                    .refreshToken(refreshToken)
-                    .build();
-
-            return reissueTokenResponse;
+            return BaseResponseDto.of(ErrorMessage.FAIL_GET_INFORMATION);
 
         }
 
-        reissueTokenResponse = TokenResponseDto.builder()
-                .code(403)
-                .message("접근이 올바르지 않습니다.")
-                .build();
+        Optional<User> userData = userRepository.findByUserNumber(String.valueOf(userInfo.getId()));
 
-        return reissueTokenResponse;
 
+        if(userData.isEmpty()){
+            user = User.builder()
+                    .userNumber(String.valueOf(userInfo.getId()))
+                    .roles("USER")
+                    .early(true)
+                    .build();
+
+            userRepository.save(user);
+        }
+
+        Optional<User> userLoginData = userRepository.findByUserNumber(String.valueOf(userInfo.getId()));
+
+        if(userLoginData.isEmpty()){
+
+            return BaseResponseDto.of(ErrorMessage.FAIL_GET_INFORMATION);
+
+        }
+
+        early = userLoginData.get().isEarly();
+
+        String refreshToken = jwtTokenProvider.createRefreshToken(userLoginData.get().getId());
+
+
+        redisTemplate.opsForValue().set(String.valueOf(userLoginData.get().getId()),refreshToken);
+
+        log.info("카카오 로그인 완료");
+
+        return BaseResponseDto.of(
+                SuccessMessage.SUCCESS,
+                TokenResponseDto.of(
+                        jwtTokenProvider.createAccessToken(
+                                userLoginData.get().getId(),
+                                String.valueOf(userLoginData.get().getRoles())),
+                        refreshToken,
+                        early
+                )
+        );
     }
 
-
-
-
-    public void deleteValueByKey(String key) {
-        redisTemplate.delete(key);
-    }
-
-
-
-
-
-
-
-    public Mono<KakaoUserResponseDto> getUserInfo(String accessToken) {
-        return webClient
-                .get()
-                .uri("https://kapi.kakao.com/v2/user/me") // 카카오 사용자 정보 엔드포인트
-                .headers(headers -> headers.setBearerAuth(accessToken))
-                .retrieve()
-                .bodyToMono(KakaoUserResponseDto.class);
-    }
 }

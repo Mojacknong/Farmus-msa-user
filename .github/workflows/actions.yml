@@ -2,7 +2,7 @@ name: ModernFarmer CI/CD
 
 on:
   push:
-    branches: ["dev"]
+    branches: ["feature_32/계정-삭제-api", "dev"]
 
 permissions:
   contents: read
@@ -49,6 +49,7 @@ jobs:
           echo "${{ secrets.PROPERTIES_YML }}" > ./application.yml
         shell: bash
 
+
       # 빌드(테스트 스킵)
       - name: Build with Gradle
         run: ./gradlew build -x test
@@ -68,8 +69,9 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
+            
             docker stop ModernFarmerUser
             docker rm ModernFarmerUser
             docker rmi ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:1.0
             docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:1.0
-            docker run -d -p 80:8080 --name ModernFarmerUser ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:1.0
+            docker run -d -p 8081:8081 --name ModernFarmerUser ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:1.0

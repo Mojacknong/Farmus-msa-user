@@ -5,10 +5,9 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @NoArgsConstructor
-@AllArgsConstructor
-@Data
-@SuperBuilder
-public class ResponseDto {
-    private int code;
-    private String message;
+@AllArgsConstructor(staticName = "of")
+@Getter
+public class ProfileImageResponseDto{
+
+    private String profileImage;
 }
